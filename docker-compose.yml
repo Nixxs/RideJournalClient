@@ -1,7 +1,7 @@
 version: '3.3'
 
 services:
-  db:
+  ridejournaldb:
     image: mysql:latest
     restart: always
     environment:
@@ -15,14 +15,14 @@ services:
       - ridejournaldata:/var/lib/mysql
     container_name: ride-journal-server-db
 
-  app:
+  server:
     image: ridejournalserver-app:latest
     restart: always
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=db
+      - DB_HOST=ridejournaldb
       - DB_PORT=${DB_PORT}
       - DB_SSL=${DB_SSL}
       - BASE_URL=${BASE_URL}
@@ -30,7 +30,7 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      db:
+      ridejournaldb:
         condition: service_started
     container_name: ride-journal-server-app
 
