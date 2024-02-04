@@ -1,9 +1,13 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Layout from "./layouts";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello World!</div>
+    element:<Layout />,
+    children: [
+      {path:"/",element:<div>the outlet content from layout component</div>}
+    ]
   }
 ]);
 
