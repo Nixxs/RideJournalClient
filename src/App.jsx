@@ -1,12 +1,15 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./layouts";
+import Home from "./pages/Home";
+import Vehicles from "./pages/Vehicles";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element:<Layout />,
     children: [
-      {path:"/",element:<div>the outlet content from layout component</div>}
+      {path:"/",element:<Home />},
+      {path:"/vehicles",element:<Vehicles />}
     ]
   }
 ]);
