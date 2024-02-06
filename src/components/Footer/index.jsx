@@ -24,15 +24,15 @@ function Footer() {
                 © 2024 Ride Journal. All rights reserved.
             </Typography>
             <Typography variant="body2" color="textSecondary" align="center">
-                <NavLink to="/contact" style={{ color: 'inherit', textDecoration: 'none' }}>Contact</NavLink> |  
+                <Link href="mailto:nicholas.chai@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>Contact</Link> |  
                 <NavLink to="/about" style={{ color: 'inherit', textDecoration: 'none' }}> About</NavLink> | 
-                <NavLink to="/home" style={{ color: 'inherit', textDecoration: 'none' }}> Home</NavLink>
+                <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}> Home</NavLink>
             </Typography>
             <Typography variant="body2" color="textSecondary" align="center" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
                 Follow Us On:
-                <Link href="https://twitter.com" color="inherit"><TwitterIcon /></Link>
-                <Link href="https://youtube.com" color="inherit"><YoutubeIcon /></Link>
-                <Link href="https://Github.com" color="inherit"><GithubIcon /></Link>
+                <Link href="https://twitter.com" target="_blank" color="inherit"><TwitterIcon /></Link>
+                <Link href="https://youtube.com" target="_blank" color="inherit"><YoutubeIcon /></Link>
+                <Link href="https://Github.com/nixxs" target="_blank" color="inherit"><GithubIcon /></Link>
             </Typography>
         </Box>
     );
