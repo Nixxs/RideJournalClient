@@ -1,9 +1,11 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { layoutContext } from "../../layouts";
 
 function Vehicles() {
     const { setPageTitle } = useContext(layoutContext);
-    setPageTitle('Vehicles');
+    useEffect(() => {
+        setPageTitle('Vehicles');
+    }, [setPageTitle]);
 
     return (
         <h1>Vehicles</h1>

@@ -1,9 +1,12 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { layoutContext } from "../../layouts";
 
 function About() {
     const { setPageTitle } = useContext(layoutContext);
-    setPageTitle('About');
+    useEffect(() => {
+        setPageTitle('About');
+    }, [setPageTitle]);
+    
 
     return (
         <h1>About</h1>

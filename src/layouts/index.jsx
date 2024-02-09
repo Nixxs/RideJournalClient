@@ -15,7 +15,7 @@ export const drawerWidth = 240;
 export const layoutContext = createContext();
 
 function Layout() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [pageTitle, setPageTitle] = React.useState("Home");
   const theme = useTheme();
 

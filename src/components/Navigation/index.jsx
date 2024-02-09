@@ -74,8 +74,8 @@ const pages = [
 ];
 
 // TODO: This should change depending on whether user is logged in or not
-const settings = [
-  { name: 'Account', path: '/', icon: <AccountBoxIcon />},
+const actions = [
+  { name: 'Profile', path: '/', icon: <AccountBoxIcon />},
   { name: 'My Vehicles', path: '/vehicles' , icon: <DirectionsCarFilledRoundedIcon />},
   { name: 'Post Event', path: '/events', icon: <AutoStoriesIcon />},
 ];
@@ -116,34 +116,6 @@ function Navigation() {
       </DrawerHeader>
       <Divider />
       <List>
-        {settings.map((setting, index) => (
-          <ListItem key={setting.name} disablePadding sx={{ display: "block" }}>
-            <NavLink to={setting.path} style={{ color: 'inherit', textDecoration: 'none' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {setting.icon}
-                </ListItemIcon>
-                <ListItemText primary={setting.name} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </NavLink>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
         {pages.map((page, index) => (
           <ListItem key={page.name} disablePadding sx={{ display: "block" }}>
             <NavLink to={page.path} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -164,6 +136,33 @@ function Navigation() {
                   {page.icon}
                 </ListItemIcon>
                 <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </NavLink>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {actions.map((action, index) => (
+          <ListItem key={action.name} disablePadding sx={{ display: "block" }}>
+            <NavLink to={action.path} style={{ color: 'inherit', textDecoration: 'none' }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  {action.icon}
+                </ListItemIcon>
+                <ListItemText primary={action.name} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </NavLink>
           </ListItem>
