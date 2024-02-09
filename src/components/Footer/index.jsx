@@ -14,21 +14,22 @@ function Footer() {
         <Box
             component="footer"
             sx={{
-                py: 3,
+                paddingTop: theme.spacing(2),
+                paddingBottom: theme.spacing(1),
                 px: 2,
                 mt: 'auto',
                 backgroundColor: theme.palette.grey[200],
             }}
         >
-            <Typography variant="body2" color="textSecondary" align="center">
+            <Typography variant="body2" color="textSecondary" align="center" sx={{ fontSize: '0.8em' }}>
                 © 2024 Ride Journal. All rights reserved.
             </Typography>
-            <Typography variant="body2" color="textSecondary" align="center">
+            <Typography variant="body2" color="textSecondary" align="center" sx={{ fontSize: '0.8em' }}>
                 <Link href="mailto:nicholas.chai@outlook.com" style={{ color: 'inherit', textDecoration: 'none' }}>Contact</Link> |  
                 <NavLink to="/about" style={{ color: 'inherit', textDecoration: 'none' }}> About</NavLink> | 
                 <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}> Home</NavLink>
             </Typography>
-            <Typography variant="body2" color="textSecondary" align="center" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
+            <Typography variant="body2" color="textSecondary" align="center" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, fontSize: '0.8em' }}>
                 Follow Us On:
                 <Link href="https://twitter.com" target="_blank" color="inherit"><TwitterIcon /></Link>
                 <Link href="https://youtube.com" target="_blank" color="inherit"><YoutubeIcon /></Link>
