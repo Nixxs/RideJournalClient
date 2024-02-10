@@ -4,6 +4,9 @@ import { createTheme } from '@mui/material/styles';
 const rjTheme = createTheme({
   palette: {
     mode: 'light',
+    accent: {
+      main: '#eb9234',
+    },
   },
 });
 

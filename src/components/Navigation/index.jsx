@@ -75,9 +75,9 @@ const pages = [
 
 // TODO: This should change depending on whether user is logged in or not
 const actions = [
-  { name: 'Profile', path: '/', icon: <AccountBoxIcon />},
-  { name: 'My Vehicles', path: '/vehicles' , icon: <DirectionsCarFilledRoundedIcon />},
-  { name: 'Post Event', path: '/events', icon: <AutoStoriesIcon />},
+  { name: 'Profile', path: '/profile', icon: <AccountBoxIcon />},
+  { name: 'My Vehicles', path: '/myvehicles' , icon: <DirectionsCarFilledRoundedIcon />},
+  { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
 ];
 
 function Navigation() {
@@ -91,21 +91,26 @@ function Navigation() {
   return (
     <Drawer variant="permanent" open={open}>
       <DrawerHeader>
-        <Typography
-          variant="h6"
-          noWrap
-          sx={{
-            mr: 2,
-            flexGrow: 1,
-            fontFamily: "monospace",
-            fontWeight: 900,
-            letterSpacing: ".1rem",
-            color: theme.palette.primary.main,
-            textDecoration: "none",
-          }}
-        >
-          RIDE JOURNAL
-        </Typography>
+        <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+          <Typography
+            variant="h6"
+            noWrap
+            sx={{
+              mr: 2,
+              flexGrow: 1,
+              fontFamily: "monospace",
+              fontWeight: 900,
+              letterSpacing: ".1rem",
+              color: theme.palette.primary.main,
+              '&:hover': {
+                color: theme.palette.primary.dark, // Change this to the desired hover color
+                textShadow: '0 0 10px rgba(0, 0, 0, 0.2)', // Add a text shadow on hover
+              },
+            }}
+          >
+            RIDE JOURNAL
+          </Typography>
+        </NavLink>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === "rtl" ? (
             <ChevronRightIcon />
