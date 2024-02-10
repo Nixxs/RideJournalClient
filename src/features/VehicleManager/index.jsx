@@ -5,7 +5,7 @@ function VehicleManager() {
     const { vehicles, setVehicles } = useContext(VehiclesContext);
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/vehicles')
+        fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles`)
             .then(response => {
                 if (response.ok) {
                     return response.json();
