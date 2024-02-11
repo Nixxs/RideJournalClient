@@ -7,26 +7,35 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box"; // Import Box
+import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
 
 function VehicleManager() {
-  const { vehicles, setVehicles } = useContext(VehiclesContext);
+  const { state, dispatch } = useContext(VehiclesContext);
   // State to track expanded profiles
   const [expandedProfiles, setExpandedProfiles] = useState({});
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("no data from vehicles api");
-      })
+      .then((response) => response.json())
       .then((vehiclesData) => {
-        setVehicles(vehiclesData);
+        switch (vehiclesData.result) {
+          case 200:
+            dispatch({ type: "GET_VEHICLES_SUCCESS", payload: vehiclesData.data });
+            break;
+          case 404:
+            dispatch({ type: "GET_VEHICLES_FAILURE", payload: vehiclesData.message });
+            break;
+          case 500:
+            dispatch({ type: "GET_VEHICLES_FAILURE", payload: vehiclesData.message });
+            break;
+          default:
+            dispatch({ type: "GET_VEHICLES_FAILURE", payload: vehiclesData.message });
+            break;
+        }
       })
       .catch((error) =>
-        console.error("something went wrong getting data for vehicles")
+        dispatch({ type: "GET_VEHICLES_FAILURE", payload: error.message })
       );
   }, []);
 
@@ -47,9 +56,9 @@ function VehicleManager() {
     return (
       <Box sx={{ maxWidth: 1280 }}>
         <Grid container spacing={3}>
-          {vehicles.map((vehicle) => (
+          {state.vehicles.map((vehicle) => (
             <Grid item xs={12} sm={6} md={4} key={vehicle.id}>
-              <Card sx={{ maxWidth: 420, m: "auto"}}>
+              <Card sx={{ maxWidth: 420, m: "auto" }}>
                 <CardMedia
                   sx={{ height: 300 }}
                   image={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
@@ -57,7 +66,7 @@ function VehicleManager() {
                   }`}
                   title={vehicle.name}
                 />
-                <CardContent sx={{minHeight: 220}}>
+                <CardContent sx={{ minHeight: 220 }}>
                   <Typography gutterBottom variant="h5" component="div">
                     {vehicle.name}
                   </Typography>
@@ -79,7 +88,7 @@ function VehicleManager() {
                     <Button
                       size="small"
                       onClick={() => toggleProfileExpansion(vehicle.id)}
-                      sx={{marginLeft: -0.5}}
+                      sx={{ marginLeft: -0.5 }}
                     >
                       {expandedProfiles[vehicle.id] ? "Show Less" : "Show More"}
                     </Button>
@@ -98,7 +107,8 @@ function VehicleManager() {
   };
 
   return (
-    <Box sx={{ paddingTop: 2 , paddingBottom: 2, paddingRight: 2}}>
+    <Box sx={{ paddingTop: 2, paddingBottom: 2, paddingRight: 2 }}>
+      {state.error && <Alert severity="error">{state.error}</Alert>}
       <VehicleList />
     </Box>
   );

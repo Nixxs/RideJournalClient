@@ -1,13 +1,14 @@
-import { useContext, useEffect, createContext, useState } from "react";
+import { useContext, useEffect, createContext, useState, useReducer } from "react";
 import { layoutContext } from "../../layouts";
 import GridItem from "../../components/GridItem";
 import VehicleManager from "../../features/VehicleManager";
+import { initialState, vehicleReducer } from "./vehicleReducer";
 
 export const VehiclesContext = createContext();
 
 function Vehicles() {
     const { setPageTitle } = useContext(layoutContext);
-    const [vehicles, setVehicles] = useState([]);
+    const [ state, dispatch ] = useReducer(vehicleReducer, initialState);
 
     useEffect(() => {
         setPageTitle('Browse Vehicles');
@@ -15,7 +16,7 @@ function Vehicles() {
 
     return (
         <GridItem>
-            <VehiclesContext.Provider value={{ vehicles, setVehicles}}>
+            <VehiclesContext.Provider value={{ state, dispatch}}>
                 <VehicleManager />
             </VehiclesContext.Provider>
         </GridItem>

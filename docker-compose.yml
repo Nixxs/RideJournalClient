@@ -33,7 +33,10 @@ services:
     depends_on:
       ridejournaldb:
         condition: service_started
+    volumes:
+      - serverimages:/app/images
     container_name: ride-journal-server-app
 
 volumes:
   ridejournaldata:
+  serverimages:
