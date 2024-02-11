@@ -10,7 +10,7 @@ function Vehicles() {
     const [vehicles, setVehicles] = useState([]);
 
     useEffect(() => {
-        setPageTitle('Vehicles');
+        setPageTitle('Browse Vehicles');
     }, [setPageTitle]);
 
     return (
