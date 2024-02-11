@@ -98,7 +98,7 @@ function VehicleManager() {
   };
 
   return (
-    <Box sx={{ paddingTop: 2 }}>
+    <Box sx={{ paddingTop: 2 , paddingBottom: 2, paddingRight: 2}}>
       <VehicleList />
     </Box>
   );
