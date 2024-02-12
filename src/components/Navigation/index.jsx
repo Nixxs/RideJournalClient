@@ -75,7 +75,6 @@ const pages = [
 
 // TODO: This should change depending on whether user is logged in or not
 const actions = [
-  { name: 'Profile', path: '/profile', icon: <AccountBoxIcon />},
   { name: 'My Vehicles', path: '/myvehicles' , icon: <DirectionsCarFilledRoundedIcon />},
   { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
 ];

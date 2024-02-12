@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
+import { NavLink } from "react-router-dom";
 
 function VehicleManager() {
   const { state, dispatch } = useContext(VehiclesContext);
@@ -49,7 +50,7 @@ function VehicleManager() {
 
   // Determine if the profile text is long enough to need an expansion button
   const isExpandable = (text) => {
-    return text && text.length > 100; // Example threshold, adjust as needed
+    return text && text.length > 200; // Example threshold, adjust as needed
   };
 
   const VehicleList = () => {
@@ -66,12 +67,12 @@ function VehicleManager() {
                   }`}
                   title={vehicle.name}
                 />
-                <CardContent sx={{ minHeight: 220 }}>
+                <CardContent sx={{ minHeight: 190, minWidth: 300 }}>
                   <Typography gutterBottom variant="h5" component="div">
                     {vehicle.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {vehicle.make} {vehicle.model} - {vehicle.year}
+                  {vehicle.year} {vehicle.make} {vehicle.model} - {vehicle.location}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -80,6 +81,7 @@ function VehicleManager() {
                       maxHeight: expandedProfiles[vehicle.id] ? "none" : 60,
                       minHeight: 80,
                       overflow: "hidden",
+                      marginTop: 1
                     }}
                   >
                     {vehicle.profile}
@@ -95,8 +97,9 @@ function VehicleManager() {
                   )}
                 </CardContent>
                 <CardActions>
-                  <Button size="small">Share</Button>
-                  <Button size="small">Learn More</Button>
+                  <NavLink>
+                    <Button sx={{marginLeft: 0.5}} size="small">View Timeline</Button>
+                  </NavLink>
                 </CardActions>
               </Card>
             </Grid>

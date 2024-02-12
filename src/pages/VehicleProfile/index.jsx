@@ -1,16 +1,15 @@
 import { useContext, useEffect } from "react";
 import { layoutContext } from "../../layouts";
 
-function Profile() {
+function VehicleProfile() {
     const { setPageTitle } = useContext(layoutContext);
     useEffect(() => {
-        setPageTitle('Profile');
+        setPageTitle('Vehicle Profile');
     }, [setPageTitle]);
     
-
     return (
-        <h1>Profile</h1>
+        <h1>VehicleProfile</h1>
     );
 }
 
-export default Profile
+export default VehicleProfile
