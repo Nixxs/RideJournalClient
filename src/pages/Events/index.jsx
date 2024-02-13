@@ -1,14 +1,25 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, createContext, useReducer} from "react";
 import { layoutContext } from "../../layouts";
+import GridItem from "../../components/GridItem";
+import EventManager from "../../features/EventManager";
+import { initialState, eventReducer } from "./eventReducer";
+
+export const EventsContext = createContext();
 
 function Events() {
     const { setPageTitle } = useContext(layoutContext);
+    const [ state, dispatch ] = useReducer(eventReducer, initialState);
+
     useEffect(() => {
         setPageTitle('Events');
     }, [setPageTitle]);
 
     return (
-        <h1>Events</h1>
+        <GridItem>
+            <EventsContext.Provider value={{ state, dispatch}}>
+                <EventManager />
+            </EventsContext.Provider>
+        </GridItem>
     );
 }
 
