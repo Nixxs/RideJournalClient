@@ -35,7 +35,7 @@ function EventManager() {
         return (
             <div>
                 {state.events.map((event) => (
-                    <Event eventdata={event}/>
+                    <Event eventReference={event}/>
                 ))}
             </div>
         );

@@ -1,4 +1,7 @@
-import { eventImagesReducer, initialState } from "../../pages/Events/eventImagesReducer";
+import {
+  eventDetailsReducer,
+  initialState,
+} from "../../pages/Events/eventDetailsReducer";
 import { useReducer, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -8,198 +11,200 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import IconButton from "@mui/material/IconButton";
-import { useTheme } from '@mui/material/styles';
 import { NavLink } from "react-router-dom";
+import CardActions from "@mui/material/CardActions";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
 
-function Event({ eventdata }) {
+function Event({ eventReference }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [state, dispatch] = useReducer(eventImagesReducer, initialState);
-  const theme = useTheme();
+  const [state, dispatch] = useReducer(eventDetailsReducer, initialState);
+  console.log()
 
   // get the event images
   useEffect(() => {
     fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/images/event/${
-        eventdata.id
-      }`
+      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events/${
+        eventReference.id
+      }/include`
     )
       .then((response) => response.json())
-      .then((imagesData) => {
-        switch (imagesData.result) {
+      .then((eventData) => {
+        switch (eventData.result) {
           case 200:
             dispatch({
-              type: "GET_EVENT_IMAGES_SUCCESS",
-              payload: imagesData.data,
+              type: "GET_EVENT_DETAIL_SUCCESS",
+              payload: eventData.data,
             });
             break;
           case 404:
             dispatch({
-              type: "GET_EVENT_IMAGES_FAILURE",
-              payload: imagesData.message,
+              type: "GET_EVENT_DETAIL_FAILURE",
+              payload: eventData.message,
             });
             break;
           case 500:
             dispatch({
-              type: "GET_EVENT_IMAGES_FAILURE",
-              payload: imagesData.message,
+              type: "GET_EVENT_DETAIL_FAILURE",
+              payload: eventData.message,
             });
             break;
           default:
             dispatch({
-              type: "GET_EVENT_IMAGES_FAILURE",
-              payload: imagesData.message,
+              type: "GET_EVENT_DETAIL_FAILURE",
+              payload: eventData.message,
             });
             break;
         }
       })
       .catch((error) =>
-        dispatch({ type: "GET_EVENT_IMAGES_FAILURE", payload: error.message })
-      );
-  }, []);
-
-  // get the event vehicle
-  useEffect(() => {
-    fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${
-        eventdata.vehicleId
-      }`
-    )
-      .then((response) => response.json())
-      .then((imagesData) => {
-        switch (imagesData.result) {
-          case 200:
-            dispatch({
-              type: "GET_EVENT_VEHICLE_SUCCESS",
-              payload: imagesData.data,
-            });
-            break;
-          case 404:
-            dispatch({
-              type: "GET_EVENT_VEHICLE_FAILURE",
-              payload: imagesData.message,
-            });
-            break;
-          case 500:
-            dispatch({
-              type: "GET_EVENT_VEHICLE_FAILURE",
-              payload: imagesData.message,
-            });
-            break;
-          default:
-            dispatch({
-              type: "GET_EVENT_VEHICLE_FAILURE",
-              payload: imagesData.message,
-            });
-            break;
-        }
-      })
-      .catch((error) =>
-        dispatch({ type: "GET_EVENT_VEHICLE_FAILURE", payload: error.message })
+        dispatch({ type: "GET_EVENT_DETAIL_FAILURE", payload: error.message })
       );
   }, []);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % state.images.length);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex + 1) % state.eventDetails.Images.length
+    );
   };
 
   const handlePrevious = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + state.images.length) % state.images.length
+      (prevIndex) =>
+        (prevIndex - 1 + state.eventDetails.Images.length) %
+        state.eventDetails.Images.length
     );
   };
 
   return (
-    <Card
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '50vh',
-      maxWidth: '60vw',
-      m: 2,
-      // If you want the image to take full width on small screens
-      '& > div': { width: '100%' },
-    }}
-  >
-      <div style={{height: "100%", position: "relative" }}>
-        <ImageList
-          sx={{
-            width: "100%",
-            height: "100%",
-            transform: "translateZ(0)",
-          }}
-          rowHeight={450}
-          cols={1}
-        >
-          <ImageListItem key={state.images[currentIndex]}>
-            <img
-              src={`${state.images[currentIndex]}?w=500&h=450&fit=crop&auto=format`}
-              srcSet={`${state.images[currentIndex]}?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
-              alt={eventdata.title}
-              loading="lazy"
-              className="fade-in"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover"
-              }}
-            />
-          </ImageListItem>
-        </ImageList>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: 0,
-            transform: "translateY(-50%)",
-            color: "white",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            "&:hover": {
-              bgcolor: "rgba(0, 0, 0, 0.7)",
-            },
-          }}
-          onClick={handlePrevious}
-        >
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 0,
-            transform: "translateY(-50%)",
-            color: "white",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            "&:hover": {
-              bgcolor: "rgba(0, 0, 0, 0.7)",
-            },
-          }}
-          onClick={handleNext}
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </div>
-      <CardContent
+    (state.eventDetails === null) ? ( <div>Loading...</div> ) : (
+      <Card
         sx={{
-          width: '100%',
-          // Add any additional styling for small screens here
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "50vh",
+          maxWidth: "60vw",
+          minWidth: 300,
+          m: 2,
+          // If you want the image to take full width on small screens
+          "& > div": { width: "100%" },
         }}
       >
-        <Typography variant="h5" component="div">
-          {eventdata.title}
-        </Typography>
-        {state.vehicle && (
-            <Typography variant="body2" color="text.secondary">
-                {state.vehicle.year} {state.vehicle.make} {state.vehicle.model}
-            </Typography>
-        )}
-        <Typography sx={{marginTop: 1}} variant="body1" color="text.secondary">
-          {eventdata.detail}
-        </Typography>
-        {state.vehicle && (
-            <NavLink to={`/vehicles/${state.vehicle.id}`}>{state.vehicle.name}</NavLink>
-        )}
-      </CardContent>
-    </Card>
+        <div style={{ height: "100%", position: "relative" }}>
+          <CardContent
+            sx={{
+              width: "100%",
+              margin: 0,
+              paddingBottom: 0,
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Box sx={{flexGrow: 1}}>
+              <Typography variant="body2"  color="text.secondary">
+                {state.eventDetails.createdAt}
+              </Typography>
+              <Typography variant="h6" color="text.secondary">
+                {state.eventDetails.title}
+              </Typography>
+            </Box>
+            <Box sx={{flexGrow: 0}}>
+              <IconButton sx={{ p: 0 }}>
+                <Avatar alt="Nicholas Chai" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Box>
+
+
+          </CardContent>
+          <ImageList
+            sx={{
+              width: "100%",
+              height: "100%",
+            }}
+            rowHeight={450}
+            cols={1}
+          >
+            <ImageListItem key={state.eventDetails.Images[currentIndex].id}>
+              <img
+                src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                  state.eventDetails.Images[currentIndex].image
+                }?w=500&h=450&fit=crop&auto=format`}
+                srcSet={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                  state.eventDetails.Images[currentIndex].image
+                }?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
+                alt={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex].id}`}
+                loading="lazy"
+                className="fade-in"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </ImageListItem>
+          </ImageList>
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: 0,
+              transform: "translateY(-50%)",
+              color: "white",
+              bgcolor: "rgba(0, 0, 0, 0.5)",
+              "&:hover": {
+                bgcolor: "rgba(0, 0, 0, 0.7)",
+              },
+            }}
+            onClick={handlePrevious}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: 0,
+              transform: "translateY(-50%)",
+              color: "white",
+              bgcolor: "rgba(0, 0, 0, 0.5)",
+              "&:hover": {
+                bgcolor: "rgba(0, 0, 0, 0.7)",
+              },
+            }}
+            onClick={handleNext}
+          >
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </div>
+        <CardContent
+          sx={{
+            width: "100%",
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            {state.eventDetails.Vehicle.year} {state.eventDetails.Vehicle.make}{" "}
+            {state.eventDetails.Vehicle.model}
+          </Typography>
+
+          <Typography
+            sx={{ marginTop: 1 }}
+            variant="body1"
+            color="text.secondary"
+          >
+            {state.eventDetails.detail}
+          </Typography>
+          
+          <CardActions>
+            <NavLink to={`/vehicles/${state.eventDetails.Vehicle.id}`}>
+              <Button sx={{marginLeft: -1}} size="small" variant="outlined">View Timeline</Button>
+            </NavLink>
+          </CardActions>
+
+        </CardContent>
+      </Card>
+    )
+
   );
 }
 

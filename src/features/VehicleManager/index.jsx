@@ -98,7 +98,7 @@ function VehicleManager() {
                 </CardContent>
                 <CardActions>
                   <NavLink to={`/vehicles/${vehicle.id}`}>
-                    <Button sx={{marginLeft: 0.5}} size="small">View Timeline</Button>
+                    <Button sx={{marginLeft: 1, marginTop: -2}} size="small" variant="outlined">View Timeline</Button>
                   </NavLink>
                 </CardActions>
               </Card>
