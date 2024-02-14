@@ -1,20 +1,20 @@
 export const initialState = {
-    eventDetails: null,
+    userDetails: null,
     error: null,
 }
 
-export const eventDetailsReducer = (state, action) => {
+export const userReducer = (state, action) => {
     switch (action.type) {
-        case 'GET_EVENT_DETAIL_SUCCESS':
+        case 'GET_USER_SUCCESS':
             return {
                 ...state,
-                eventDetails: action.payload
+                userDetails: action.payload,
             }
-        case "GET_EVENT_DETAIL_FAILURE":
+        case "GET_USER_FAILURE":
             console.log(action.payload);
             return {
                 ...state,
-                eventDetails: [],
+                userDetails: null,
                 error: action.payload,
             }
         default:

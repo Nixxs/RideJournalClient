@@ -5,8 +5,7 @@ import { layoutContext } from "../../layouts";
 function VehicleProfile() {
     const { id } = useParams();
     const { setPageTitle } = useContext(layoutContext);
-
-
+    
     useEffect(() => {
         setPageTitle('Vehicle Profile');
     }, [setPageTitle]);

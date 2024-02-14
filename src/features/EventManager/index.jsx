@@ -2,7 +2,7 @@ import { EventsContext } from "../../pages/Events";
 import { useContext, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
-import Event from "./Event";
+import EventCard from "./EventCard";
 
 function EventManager() {
     const { state, dispatch } = useContext(EventsContext);
@@ -35,7 +35,7 @@ function EventManager() {
         return (
             <div>
                 {state.events.map((event) => (
-                    <Event eventReference={event}/>
+                    <EventCard key={event.id} eventId={event.id}/>
                 ))}
             </div>
         );

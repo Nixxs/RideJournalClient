@@ -2,7 +2,7 @@ import { useContext, useEffect, createContext, useReducer} from "react";
 import { layoutContext } from "../../layouts";
 import GridItem from "../../components/GridItem";
 import EventManager from "../../features/EventManager";
-import { initialState, eventReducer } from "./eventReducer";
+import { initialState, eventReducer } from "../../reducers/eventReducer";
 
 export const EventsContext = createContext();
 

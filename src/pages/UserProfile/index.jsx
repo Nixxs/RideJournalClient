@@ -1,16 +1,18 @@
 import { useContext, useEffect } from "react";
 import { layoutContext } from "../../layouts";
+import { useParams } from "react-router-dom";
 
-function MyVehicles() {
+function UserProfile() {
     const { setPageTitle } = useContext(layoutContext);
+    const { id } = useParams();
+
     useEffect(() => {
         setPageTitle('My Vehicles');
     }, [setPageTitle]);
-    
 
     return (
-        <h1>MyVehicles</h1>
+        <h1>UserProfile: {id}</h1>
     );
 }
 
-export default MyVehicles
+export default UserProfile

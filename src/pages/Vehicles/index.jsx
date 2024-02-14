@@ -2,7 +2,7 @@ import { useContext, useEffect, createContext, useReducer } from "react";
 import { layoutContext } from "../../layouts";
 import GridItem from "../../components/GridItem";
 import VehicleManager from "../../features/VehicleManager";
-import { initialState, vehicleReducer } from "./vehicleReducer";
+import { initialState, vehicleReducer } from "../../reducers/vehicleReducer";
 
 export const VehiclesContext = createContext();
 

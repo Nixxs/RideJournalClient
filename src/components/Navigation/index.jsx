@@ -74,8 +74,10 @@ const pages = [
 ];
 
 // TODO: This should change depending on whether user is logged in or not
+// the ID needs to come from the layout context but the user login isnt handled yet
+// this would not show if the user is not logged in yet
 const actions = [
-  { name: 'My Vehicles', path: '/myvehicles' , icon: <DirectionsCarFilledRoundedIcon />},
+  { name: 'My Vehicles', path: '/profile/1' , icon: <DirectionsCarFilledRoundedIcon />},
   { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
 ];
 

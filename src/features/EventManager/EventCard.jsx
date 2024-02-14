@@ -1,7 +1,7 @@
 import {
   eventDetailsReducer,
   initialState,
-} from "../../pages/Events/eventDetailsReducer";
+} from "../../reducers/eventDetailsReducer";
 import { useReducer, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,18 +15,18 @@ import { NavLink } from "react-router-dom";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
+import UserAvatar from "../../components/UserAvatar";
+import Tooltip from "@mui/material/Tooltip";
 
-function Event({ eventReference }) {
+function EventCard({ eventId }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [state, dispatch] = useReducer(eventDetailsReducer, initialState);
-  console.log()
 
-  // get the event images
+  // get the event details
   useEffect(() => {
     fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events/${
-        eventReference.id
+        eventId
       }/include`
     )
       .then((response) => response.json())
@@ -77,6 +77,21 @@ function Event({ eventReference }) {
     );
   };
 
+  const eventTypeIcon = (type) => {
+    switch (type) {
+      case "maintenance":
+        return "🔧";
+      case "repair":
+        return "🛠️";
+      case "modification":
+        return "⚙️";
+      case "story":
+        return "📖";
+      default:
+        return "💢";
+    }
+  }
+
   return (
     (state.eventDetails === null) ? ( <div>Loading...</div> ) : (
       <Card
@@ -101,21 +116,31 @@ function Event({ eventReference }) {
               flexDirection: "row",
             }}
           >
+            <Box sx={{flexGrow: 0, marginRight: 2, marginTop: 0.7}}>
+              <UserAvatar userId={state.eventDetails.Vehicle.userId}/>
+            </Box>
             <Box sx={{flexGrow: 1}}>
+              <Typography variant="h6" color="text.secondary">
+                <Tooltip title={state.eventDetails.type} arrow> 
+                  {eventTypeIcon(state.eventDetails.type)} 
+                </Tooltip>
+                {" "}
+                {state.eventDetails.title}
+              </Typography>
               <Typography variant="body2"  color="text.secondary">
                 {state.eventDetails.createdAt}
               </Typography>
-              <Typography variant="h6" color="text.secondary">
-                {state.eventDetails.title}
+            </Box>
+            <Box sx={{flexGrow: 0, marginTop: 0.5}}>
+              <Typography variant="body2"  color="text.secondary" align="right">
+                {state.eventDetails.Vehicle.name} - {state.eventDetails.Vehicle.location}
+                <br />
+                {state.eventDetails.Vehicle.year} {" "} {state.eventDetails.Vehicle.make} 
+                {" "} {state.eventDetails.Vehicle.model}
+                <br />
+                {state.eventDetails.odometer} kms
               </Typography>
             </Box>
-            <Box sx={{flexGrow: 0}}>
-              <IconButton sx={{ p: 0 }}>
-                <Avatar alt="Nicholas Chai" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Box>
-
-
           </CardContent>
           <ImageList
             sx={{
@@ -144,49 +169,49 @@ function Event({ eventReference }) {
               />
             </ImageListItem>
           </ImageList>
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: 0,
-              transform: "translateY(-50%)",
-              color: "white",
-              bgcolor: "rgba(0, 0, 0, 0.5)",
-              "&:hover": {
-                bgcolor: "rgba(0, 0, 0, 0.7)",
-              },
-            }}
-            onClick={handlePrevious}
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "50%",
-              right: 0,
-              transform: "translateY(-50%)",
-              color: "white",
-              bgcolor: "rgba(0, 0, 0, 0.5)",
-              "&:hover": {
-                bgcolor: "rgba(0, 0, 0, 0.7)",
-              },
-            }}
-            onClick={handleNext}
-          >
-            <ArrowForwardIosIcon />
-          </IconButton>
+          {state.eventDetails.Images.length > 1 && (
+            <>
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: 0,
+                  transform: "translateY(-50%)",
+                  color: "white",
+                  bgcolor: "rgba(0, 0, 0, 0.5)",
+                  "&:hover": {
+                    bgcolor: "rgba(0, 0, 0, 0.7)",
+                  },
+                }}
+                onClick={handlePrevious}
+              >
+                <ArrowBackIosIcon />
+              </IconButton>
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  right: 0,
+                  transform: "translateY(-50%)",
+                  color: "white",
+                  bgcolor: "rgba(0, 0, 0, 0.5)",
+                  "&:hover": {
+                    bgcolor: "rgba(0, 0, 0, 0.7)",
+                  },
+                }}
+                onClick={handleNext}
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+            </>
+          )}
         </div>
         <CardContent
           sx={{
             width: "100%",
           }}
         >
-          <Typography variant="body2" color="text.secondary">
-            {state.eventDetails.Vehicle.year} {state.eventDetails.Vehicle.make}{" "}
-            {state.eventDetails.Vehicle.model}
-          </Typography>
-
+          {/* TODO: put in like and comment Buttons */}
           <Typography
             sx={{ marginTop: 1 }}
             variant="body1"
@@ -208,4 +233,4 @@ function Event({ eventReference }) {
   );
 }
 
-export default Event;
+export default EventCard;
