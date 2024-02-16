@@ -1,9 +1,9 @@
-import MuiAppBar from '@mui/material/AppBar';
+import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import { useContext, useState } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
@@ -15,17 +15,17 @@ import { NavLink } from "react-router-dom";
 import Box from "@mui/material/Box";
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -33,7 +33,7 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 function Header() {
-  const { open, setOpen, pageTitle } = useContext(layoutContext);
+  const { open, setOpen, pageTitle, currentUser } = useContext(layoutContext);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleDrawerOpen = () => {
@@ -49,8 +49,8 @@ function Header() {
   };
 
   const userSettings = [
-    { name: 'Account', path: '/'},
-    { name: 'Log Out', path: '/'},
+    { name: "Account", path: "/" },
+    { name: "Log Out", path: "/" },
   ];
 
   return (
@@ -72,10 +72,11 @@ function Header() {
           {pageTitle}
         </Typography>
 
-        <Box sx={{ flexGrow: 0 }}>
+        { currentUser && (        
+          <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Nicholas Chai" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={currentUser.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${currentUser.image}`} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -98,16 +99,18 @@ function Header() {
                 <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">
                     <NavLink
-                        to={setting.path}
-                        style={{ textDecoration: "none", color: "inherit" }}
-                        >
-                        {setting.name}
+                      to={setting.path}
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      {setting.name}
                     </NavLink>
                   </Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+        )}
+
       </Toolbar>
     </AppBar>
   );

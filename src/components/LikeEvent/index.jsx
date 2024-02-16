@@ -47,7 +47,6 @@ function LikeEvent({ eventId, likeData }) {
       .then((createLike) => {
         switch (createLike.result) {
           case 200:
-            console.log("Success:", createLike.data);
             dispatch({
               type: "CREATE_LIKE_SUCCESS",
               payload: createLike.data,
@@ -68,9 +67,6 @@ function LikeEvent({ eventId, likeData }) {
 
   const handleUnlike = (event) => {
     event.preventDefault();
-    const eventId = parseInt(event.currentTarget.dataset.eventid);
-    console.log(`delete Like for event: ${eventId}`);
-    console.log(state.likedStatus);
 
     fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/likes/${state.likedStatus.likeId}`, {
       method: "DELETE",
@@ -79,7 +75,6 @@ function LikeEvent({ eventId, likeData }) {
       .then((deleteLike) => {
         switch (deleteLike.result) {
           case 200:
-            console.log("Success:", deleteLike.data);
             dispatch({
               type: "DELETE_LIKE_SUCCESS",
               payload: deleteLike.data,
