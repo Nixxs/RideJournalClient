@@ -6,58 +6,29 @@ import { useEffect, useReducer, useContext } from "react";
 import { likeReducer, initialState } from "../../reducers/likeReducer";
 import { layoutContext } from "../../layouts";
 
-function LikeEvent({ eventId }) {
+function LikeEvent({ eventId, likeData }) {
   const { currentUser } = useContext(layoutContext);
   const [state, dispatch] = useReducer(likeReducer, initialState);
 
   useEffect(() => {
-    fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/likes/event/${eventId}`
-    )
-      .then((response) => response.json())
-      .then((likeData) => {
-        switch (likeData.result) {
-          case 200:
-            if (likeData.data.some((like) => like.userId === currentUser.id)) {
-              dispatch({
-                type: "SET_LIKE_STATUS",
-                payload: {
-                  likeId: likeData.data.find(
-                    (like) => like.userId === currentUser.id
-                  ).id,
-                  status: true,
-                },
-              });
-            }
-            dispatch({
-              type: "GET_LIKES_SUCCESS",
-              payload: likeData.data,
-            });
-            break;
-          case 404:
-            dispatch({
-              type: "GET_LIKES_FAILURE",
-              payload: likeData.message,
-            });
-            break;
-          case 500:
-            dispatch({
-              type: "GET_LIKES_FAILURE",
-              payload: likeData.message,
-            });
-            break;
-          default:
-            dispatch({
-              type: "GET_LIKES_FAILURE",
-              payload: likeData.message,
-            });
-            break;
-        }
-      })
-      .catch((error) =>
-        dispatch({ type: "GET_LIKES_FAILURE", payload: error.message })
-      );
-  }, []);
+    // Determine if currentUser has liked the event
+    const userLike = likeData.find(like => like.userId === currentUser.id);
+
+    if (userLike) {
+      dispatch({
+        type: "SET_LIKE_STATUS",
+        payload: {
+          likeId: userLike.id,
+          status: true,
+        },
+      });
+    }
+
+    dispatch({
+      type: "GET_LIKES_SUCCESS",
+      payload: likeData,
+    });
+  }, [likeData, currentUser.id]);
 
   const handleLike = (event) => {
     event.preventDefault();
