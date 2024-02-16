@@ -18,6 +18,7 @@ import Box from "@mui/material/Box";
 import UserAvatar from "../../components/UserAvatar";
 import Tooltip from "@mui/material/Tooltip";
 import LikeEvent from "../../components/LikeEvent";
+import Comments from "../../components/Comments";
 
 function EventCard({ eventId }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -216,8 +217,21 @@ function EventCard({ eventId }) {
           }}
         >
           {/* TODO: put in like and comment Buttons */}
-          <Box>
-            <LikeEvent eventId={state.eventDetails.id}/>
+          <Box sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            marginTop: 1,
+          }}>
+            <Box>
+              <LikeEvent eventId={state.eventDetails.id} likeData={state.eventDetails.Likes}/>
+            </Box>
+            <Box sx={{marginLeft:1}}>
+              <Comments eventId={state.eventDetails.id} commentData={state.eventDetails.Comments} 
+                sx={{marginLeft: "30px"}}
+              />
+            </Box>
           </Box>
 
           <Typography
