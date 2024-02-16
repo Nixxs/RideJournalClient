@@ -2,7 +2,7 @@ import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Header from "../components/Header";
 import { styled } from "@mui/material/styles";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { DrawerHeader } from "../components/Navigation";
 import Navigation from "../components/Navigation";
 import { Outlet } from "react-router-dom";
@@ -17,7 +17,30 @@ export const layoutContext = createContext();
 function Layout() {
   const [open, setOpen] = React.useState(true);
   const [pageTitle, setPageTitle] = React.useState("Home");
+  const [currentUser, setCurrentUser] = React.useState(null);
   const theme = useTheme();
+
+  // TODO: this needs to be part of the user login
+  const userId = 1;
+  useEffect(() => {
+    fetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${userId}`
+    )
+      .then((response) => response.json())
+      .then((userData) => {
+        switch (userData.result) {
+          case 200:
+            setCurrentUser(userData.data);
+            break;
+          default:
+            setCurrentUser(null);
+            break;
+        }
+      })
+      .catch((error) =>
+        console.error(error)
+      );
+  }, []);
 
   const Root = styled("div")(function () {
     return {
@@ -36,7 +59,7 @@ function Layout() {
   return (
     <Root>
       <CssBaseline />
-      <layoutContext.Provider value={{ open, setOpen, pageTitle, setPageTitle }}>
+      <layoutContext.Provider value={{ open, setOpen, pageTitle, setPageTitle, currentUser, setCurrentUser }}>
         <Header />
         <Navigation />
         <Main>

@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import UserAvatar from "../../components/UserAvatar";
 import Tooltip from "@mui/material/Tooltip";
+import LikeEvent from "../../components/LikeEvent";
 
 function EventCard({ eventId }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -102,6 +103,7 @@ function EventCard({ eventId }) {
           maxWidth: "60vw",
           minWidth: 300,
           m: 2,
+          padding: 0,
           // If you want the image to take full width on small screens
           "& > div": { width: "100%" },
         }}
@@ -122,7 +124,7 @@ function EventCard({ eventId }) {
             <Box sx={{flexGrow: 1}}>
               <Typography variant="h6" color="text.secondary">
                 <Tooltip title={state.eventDetails.type} arrow> 
-                  {eventTypeIcon(state.eventDetails.type)} 
+                    <span>{eventTypeIcon(state.eventDetails.type)}</span>
                 </Tooltip>
                 {" "}
                 {state.eventDetails.title}
@@ -146,6 +148,7 @@ function EventCard({ eventId }) {
             sx={{
               width: "100%",
               height: "100%",
+              margin: 0,
             }}
             rowHeight={450}
             cols={1}
@@ -209,9 +212,14 @@ function EventCard({ eventId }) {
         <CardContent
           sx={{
             width: "100%",
+            paddingTop: 1,
           }}
         >
           {/* TODO: put in like and comment Buttons */}
+          <Box>
+            <LikeEvent eventId={state.eventDetails.id}/>
+          </Box>
+
           <Typography
             sx={{ marginTop: 1 }}
             variant="body1"
