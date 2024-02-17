@@ -6,20 +6,22 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
 import MuiDrawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import DirectionsCarFilledRoundedIcon from '@mui/icons-material/DirectionsCarFilledRounded';
 import DirectionsCarFilledOutlinedIcon from '@mui/icons-material/DirectionsCarFilledOutlined';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LoginIcon from '@mui/icons-material/Login';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { styled, useTheme } from "@mui/material/styles";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../features/AuthManager";
+import Box from "@mui/material/Box";
+import LoginModal from "../LoginModal";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -73,9 +75,6 @@ const pages = [
   { name: 'Events', path: '/events', icon: <AutoStoriesOutlinedIcon />},
 ];
 
-// TODO: This should change depending on whether user is logged in or not
-// the ID needs to come from the layout context but the user login isnt handled yet
-// this would not show if the user is not logged in yet
 const actions = [
   { name: 'My Vehicles', path: '/profile/1' , icon: <DirectionsCarFilledRoundedIcon />},
   { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
@@ -83,14 +82,30 @@ const actions = [
 
 function Navigation() {
   const theme = useTheme();
+  const {authState} = useAuth();
   const { open, setOpen } = useContext(layoutContext);
+  const [actionState, setActionState ] = useState([]);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    setLoginModalOpen(true);
+  };
+
+  const handleCloseLoginModal = () => {
+    setLoginModalOpen(false);
+  };
+
+  if(authState.isAuthenticated){
+    setActionState(actions);
+  } 
 
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
   return (
-    <Drawer variant="permanent" open={open}>
+    <>
+    <Drawer variant="permanent" open={open} sx={{ display: 'flex', flexDirection: 'column' }}>
       <DrawerHeader>
         <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
           <Typography
@@ -121,7 +136,7 @@ function Navigation() {
         </IconButton>
       </DrawerHeader>
       <Divider />
-      <List>
+      <List sx={{ flexGrow: 0}}>
         {pages.map((page, index) => (
           <ListItem key={page.name} disablePadding sx={{ display: "block" }}>
             <NavLink to={page.path} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -148,8 +163,8 @@ function Navigation() {
         ))}
       </List>
       <Divider />
-      <List>
-        {actions.map((action, index) => (
+      <List sx={{ flexGrow: 1}}>
+        {actionState.map((action, index) => (
           <ListItem key={action.name} disablePadding sx={{ display: "block" }}>
             <NavLink to={action.path} style={{ color: 'inherit', textDecoration: 'none' }}>
               <ListItemButton
@@ -174,8 +189,34 @@ function Navigation() {
           </ListItem>
         ))}
       </List>
+
+      <Box>
+        <Divider />
+          <ListItemButton
+            onClick={handleLoginClick}
+            sx={{
+              minHeight: 48,
+              justifyContent: open ? "initial" : "center",
+              px: 2.5,
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: open ? 3 : "auto",
+                justifyContent: "center",
+              }}
+            >
+              <LoginIcon />
+            </ListItemIcon>
+            <ListItemText primary="Login" sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+      </Box>
     </Drawer>
+
+    <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} title="Login" message="Please login to continue" /> 
+    </>
   );
 }
 
-export default Navigation;
+export default Navigation
