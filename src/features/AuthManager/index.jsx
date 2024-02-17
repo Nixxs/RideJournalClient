@@ -16,8 +16,10 @@ const login = async (dispatch, email, password) => {
         const data = await response.json();
         if (data.result === 200) {
             dispatch({ type: "LOGIN_SUCCESS", payload: data.data });
+            return("success");
         } else {
-            dispatch({ type: "LOGIN_FAILURE", payload: data.message });
+            dispatch({ type: "LOGIN_FAILURE", payload: data.errors });
+            return(data.errors);
         }
     } catch (error) {
         dispatch({ type: "LOGIN_FAILURE", payload: `something went wrong: ${error}` });

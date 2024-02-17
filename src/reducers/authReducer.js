@@ -1,5 +1,5 @@
 export const initialState = {
-  isAuthticated: false,
+  isAuthenticated: false,
   user: null,
   token: null,
   error: null,
@@ -12,7 +12,7 @@ export const authReducer = (state, action) => {
     case "LOGIN_SUCCESS":
       return {
         ...state,
-        isAuthticated: true,
+        isAuthenticated: true,
         user: action.payload.user,
         token: action.payload.token,
       };
@@ -22,7 +22,7 @@ export const authReducer = (state, action) => {
         error: action.payload,
       };
     case "LOGOUT":
-      return { ...state, isAuthticated: false, user: null, token: null };
+      return { ...state, isAuthenticated: false, user: null, token: null };
     default:
       return state;
   }

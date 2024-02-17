@@ -74,11 +74,11 @@ function Header() {
           {pageTitle}
         </Typography>
 
-        { authState.isAuthticated ? (        
+        { authState.isAuthenticated ? (        
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={authState.user.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${currentUser.image}`} />
+                <Avatar alt={authState.user.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${authState.user.image}`} />
               </IconButton>
             </Tooltip>
             <Menu

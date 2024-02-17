@@ -15,7 +15,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { styled, useTheme } from "@mui/material/styles";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
 import { NavLink } from "react-router-dom";
@@ -84,7 +84,6 @@ function Navigation() {
   const theme = useTheme();
   const {authState} = useAuth();
   const { open, setOpen } = useContext(layoutContext);
-  const [actionState, setActionState ] = useState([]);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const handleLoginClick = () => {
@@ -94,10 +93,6 @@ function Navigation() {
   const handleCloseLoginModal = () => {
     setLoginModalOpen(false);
   };
-
-  if(authState.isAuthenticated){
-    setActionState(actions);
-  } 
 
   const handleDrawerClose = () => {
     setOpen(false);
@@ -163,33 +158,36 @@ function Navigation() {
         ))}
       </List>
       <Divider />
-      <List sx={{ flexGrow: 1}}>
-        {actionState.map((action, index) => (
-          <ListItem key={action.name} disablePadding sx={{ display: "block" }}>
-            <NavLink to={action.path} style={{ color: 'inherit', textDecoration: 'none' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {action.icon}
-                </ListItemIcon>
-                <ListItemText primary={action.name} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </NavLink>
-          </ListItem>
-        ))}
+      <List sx={{ flexGrow: 1 }}>
+        {authState.isAuthenticated && (
+          <>
+            {actions.map((action, index) => (
+              <ListItem key={action.name} disablePadding sx={{ display: "block" }}>
+                <NavLink to={action.path} style={{ color: 'inherit', textDecoration: 'none' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {action.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={action.name} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </NavLink>
+              </ListItem>
+            ))}
+          </>
+        )}
       </List>
-
       <Box>
         <Divider />
           <ListItemButton
@@ -209,7 +207,7 @@ function Navigation() {
             >
               <LoginIcon />
             </ListItemIcon>
-            <ListItemText primary="Login" sx={{ opacity: open ? 1 : 0 }} />
+            <ListItemText primary="Login/Create" sx={{ opacity: open ? 1 : 0 }} />
           </ListItemButton>
       </Box>
     </Drawer>
