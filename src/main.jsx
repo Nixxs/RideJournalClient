@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, responsiveFontSizes } from '@mui/material/styles';
 import { getInitialTheme } from './utils/theme'
+import { AuthProvider } from './features/AuthManager';
 import App from './App.jsx'
 import './index.css'
 
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CssBaseline />
     <ThemeProvider theme={currentTheme}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>,
 )

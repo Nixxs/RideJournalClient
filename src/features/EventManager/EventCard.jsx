@@ -21,11 +21,13 @@ import LikeEvent from "../../components/LikeEvent";
 import Comments from "../../components/Comments";
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
+import { useAuth } from "../../features/AuthManager";
 
 function EventCard({ eventId }) {
   const theme = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [state, dispatch] = useReducer(eventDetailsReducer, initialState);
+  const { authState } = useAuth();
 
   // get the event details
   useEffect(() => {

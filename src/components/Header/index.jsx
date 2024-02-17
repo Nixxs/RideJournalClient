@@ -13,6 +13,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { NavLink } from "react-router-dom";
 import Box from "@mui/material/Box";
+import { useAuth } from "../../features/AuthManager";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -33,8 +34,9 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 function Header() {
-  const { open, setOpen, pageTitle, currentUser } = useContext(layoutContext);
+  const { open, setOpen, pageTitle } = useContext(layoutContext);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { authState } = useAuth();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -72,11 +74,11 @@ function Header() {
           {pageTitle}
         </Typography>
 
-        { currentUser && (        
+        { authState.isAuthticated ? (        
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={currentUser.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${currentUser.image}`} />
+                <Avatar alt={authState.user.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${currentUser.image}`} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -109,7 +111,7 @@ function Header() {
               ))}
             </Menu>
           </Box>
-        )}
+        ): null}
 
       </Toolbar>
     </AppBar>

@@ -17,30 +17,7 @@ export const layoutContext = createContext();
 function Layout() {
   const [open, setOpen] = React.useState(true);
   const [pageTitle, setPageTitle] = React.useState("Home");
-  const [currentUser, setCurrentUser] = React.useState(null);
   const theme = useTheme();
-
-  // TODO: this needs to be part of the user login
-  const userId = 1;
-  useEffect(() => {
-    fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${userId}`
-    )
-      .then((response) => response.json())
-      .then((userData) => {
-        switch (userData.result) {
-          case 200:
-            setCurrentUser(userData.data);
-            break;
-          default:
-            setCurrentUser(null);
-            break;
-        }
-      })
-      .catch((error) =>
-        console.error(error)
-      );
-  }, []);
 
   const Root = styled("div")(function () {
     return {
@@ -59,7 +36,7 @@ function Layout() {
   return (
     <Root>
       <CssBaseline />
-      <layoutContext.Provider value={{ open, setOpen, pageTitle, setPageTitle, currentUser, setCurrentUser }}>
+      <layoutContext.Provider value={{ open, setOpen, pageTitle, setPageTitle }}>
         <Header />
         <Navigation />
         <Main>

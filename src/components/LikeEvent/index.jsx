@@ -2,33 +2,37 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import { useEffect, useReducer, useContext } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { likeReducer, initialState } from "../../reducers/likeReducer";
-import { layoutContext } from "../../layouts";
+import { useAuth } from "../../features/AuthManager";
+import GenericModal from "../GenericModal";
 
 function LikeEvent({ eventId, likeData }) {
-  const { currentUser } = useContext(layoutContext);
+  const { authState } = useAuth();
+  const [open, setOpen] = useState(false);
   const [state, dispatch] = useReducer(likeReducer, initialState);
 
   useEffect(() => {
     // Determine if currentUser has liked the event
-    const userLike = likeData.find(like => like.userId === currentUser.id);
+    if (authState.isAuthticated) {
+      const userLike = likeData.find(like => like.userId === authState.user.id);
 
-    if (userLike) {
-      dispatch({
-        type: "SET_LIKE_STATUS",
-        payload: {
-          likeId: userLike.id,
-          status: true,
-        },
-      });
+      if (userLike) {
+        dispatch({
+          type: "SET_LIKE_STATUS",
+          payload: {
+            likeId: userLike.id,
+            status: true,
+          },
+        });
+      }
     }
 
     dispatch({
       type: "GET_LIKES_SUCCESS",
       payload: likeData,
     });
-  }, [likeData, currentUser.id]);
+  }, [likeData, authState]);
 
   const handleLike = (event) => {
     event.preventDefault();
@@ -40,7 +44,7 @@ function LikeEvent({ eventId, likeData }) {
       },
       body: JSON.stringify({
         eventId: parseInt(event.currentTarget.dataset.eventid),
-        userId: currentUser.id,
+        userId: authState.user.id,
       }),
     })
       .then((response) => response.json())
@@ -93,19 +97,39 @@ function LikeEvent({ eventId, likeData }) {
       });
   };
 
-  return state.likeDetails ? (
-    <Tooltip title={`${state.totalLikes} likes`}>
-      {state.likedStatus ? (
-        <IconButton sx={{ p: 0 }} onClick={handleUnlike} data-eventid={eventId}>
-          <ThumbUpAltIcon />
-        </IconButton>
-      ) : (
-        <IconButton sx={{ p: 0 }} onClick={handleLike} data-eventid={eventId}>
-          <ThumbUpOffAltIcon />
-        </IconButton>
-      )}
-    </Tooltip>
-  ) : null;
+  const handleOpenModal = () => setOpen(true);
+  const handlecloseModal = () => setOpen(false);
+
+  return (
+    <>
+      {state.likeDetails ? (
+        <Tooltip title={`${state.totalLikes} likes`}>
+          {state.likedStatus ? (
+            <IconButton sx={{ p: 0 }} onClick={handleUnlike} data-eventid={eventId}>
+              <ThumbUpAltIcon />
+            </IconButton>
+          ) : (
+            (authState.isAuthenticated) ? (
+              <IconButton sx={{ p: 0 }} onClick={handleLike} data-eventid={eventId}>
+                <ThumbUpOffAltIcon />
+              </IconButton>
+            ) : (
+              <IconButton sx={{ p: 0 }} onClick={handleOpenModal}>
+                <ThumbUpOffAltIcon />
+              </IconButton>
+            )
+          )}
+        </Tooltip>
+      ) : null}
+
+      <GenericModal 
+        open={open} 
+        handleClose={handlecloseModal}
+        title={"Login Required"}
+        message={"You must be logged in to like this. Please log in or sign up to continue."}
+      />
+    </>
+  );
 }
 
 export default LikeEvent;
