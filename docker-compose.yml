@@ -34,7 +34,7 @@ services:
       ridejournaldb:
         condition: service_started
     volumes:
-      - serverimages:/app/images
+      - serverimages:/app/public/images
     container_name: ride-journal-server-app
 
 volumes:
