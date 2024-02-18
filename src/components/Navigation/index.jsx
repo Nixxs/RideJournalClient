@@ -22,6 +22,8 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../../features/AuthManager";
 import Box from "@mui/material/Box";
 import LoginModal from "../LoginModal";
+import UserAvatar from "../UserAvatar";
+import LogoutModal from "../LogoutModal";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -85,6 +87,7 @@ function Navigation() {
   const {authState} = useAuth();
   const { open, setOpen } = useContext(layoutContext);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleLoginClick = () => {
     setLoginModalOpen(true);
@@ -92,6 +95,14 @@ function Navigation() {
 
   const handleCloseLoginModal = () => {
     setLoginModalOpen(false);
+  };
+
+  const handleLogoutClick = () => {
+    setLogoutModalOpen(true);
+  };
+
+  const handleCloseLogoutModal = () => {
+    setLogoutModalOpen(false);
   };
 
   const handleDrawerClose = () => {
@@ -190,29 +201,53 @@ function Navigation() {
       </List>
       <Box>
         <Divider />
-          <ListItemButton
-            onClick={handleLoginClick}
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? "initial" : "center",
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : "auto",
-                justifyContent: "center",
-              }}
-            >
-              <LoginIcon />
-            </ListItemIcon>
-            <ListItemText primary="Login/Create" sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
+          {(authState.isAuthenticated) ? (
+              <ListItemButton
+                onClick={handleLogoutClick}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <UserAvatar userData={authState.user} />
+                </ListItemIcon>
+                <ListItemText primary={authState.user.name} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            ) : (
+              <ListItemButton
+                onClick={handleLoginClick}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login/Sign Up" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            )
+          }
       </Box>
     </Drawer>
 
-    <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} title="Login" message="Please login to continue" /> 
+    <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
+    <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} /> 
     </>
   );
 }

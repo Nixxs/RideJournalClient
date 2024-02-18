@@ -55,7 +55,7 @@ const LoginModal = ({ open, handleClose }) => {
         >
             <Box sx={modalStyle}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Login/Create
+                    Login/Sign Up
                 </Typography>
                 < form onSubmit={handleLogin} >
                     <TextField
@@ -90,7 +90,7 @@ const LoginModal = ({ open, handleClose }) => {
                     onClick={handleCreateAccountOpen}
                     variant="outlined"
                     fullWidth
-                >Create Account</Button>
+                >Sign Up</Button>
             </Box>
         </Modal>
     );
