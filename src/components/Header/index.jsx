@@ -4,16 +4,9 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { NavLink } from "react-router-dom";
-import Box from "@mui/material/Box";
-import { useAuth } from "../../features/AuthManager";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -35,25 +28,10 @@ const AppBar = styled(MuiAppBar, {
 
 function Header() {
   const { open, setOpen, pageTitle } = useContext(layoutContext);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const { authState } = useAuth();
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const userSettings = [
-    { name: "Account", path: "/" },
-    { name: "Log Out", path: "/" },
-  ];
 
   return (
     <AppBar position="fixed" open={open}>
@@ -73,46 +51,6 @@ function Header() {
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
           {pageTitle}
         </Typography>
-
-        { authState.isAuthenticated ? (        
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={authState.user.name} src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${authState.user.image}`} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {userSettings.map((setting) => (
-                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">
-                    <NavLink
-                      to={setting.path}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      {setting.name}
-                    </NavLink>
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        ): null}
-
       </Toolbar>
     </AppBar>
   );
