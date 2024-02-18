@@ -42,7 +42,7 @@ function EventManager() {
     }
 
     return (
-        <Box sx={{ paddingTop: 2, paddingBottom: 2, paddingRight: 2 }}>
+        <Box sx={{ paddingBottom: 2, paddingRight: 2 }}>
         {state.error && <Alert severity="error">{state.error}</Alert>}
             <EventList />
         </Box>

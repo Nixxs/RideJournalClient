@@ -110,6 +110,7 @@ function EventCard({ eventId }) {
         maxWidth: "900px",
         minWidth: 300,
         m: 2,
+        marginLeft: 0,
         padding: 0,
         // If you want the image to take full width on small screens
         "& > div": { width: "100%" },
