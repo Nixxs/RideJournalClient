@@ -59,7 +59,7 @@ function VehicleManager() {
         <Grid container spacing={3}>
           {state.vehicles.map((vehicle) => (
             <Grid item xs={12} sm={6} md={4} key={vehicle.id}>
-              <Card sx={{ maxWidth: 420, m: "auto" }}>
+              <Card sx={{ maxWidth: "50vw", m: "auto", }}>
                 <CardMedia
                   sx={{ height: 300 }}
                   image={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
@@ -78,8 +78,8 @@ function VehicleManager() {
                     variant="body2"
                     color="text.primary"
                     sx={{
-                      maxHeight: expandedProfiles[vehicle.id] ? "none" : 60,
-                      minHeight: 80,
+                      maxHeight: expandedProfiles[vehicle.id] ? "none" : 10,
+                      minHeight: isExpandable(vehicle.profile) ? 80: 110,
                       overflow: "hidden",
                       marginTop: 1
                     }}
