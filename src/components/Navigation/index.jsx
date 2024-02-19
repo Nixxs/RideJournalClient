@@ -24,6 +24,7 @@ import Box from "@mui/material/Box";
 import LoginModal from "../LoginModal";
 import UserAvatar from "../UserAvatar";
 import LogoutModal from "../LogoutModal";
+import SignUpModal from "../SignUpModal";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -87,6 +88,7 @@ function Navigation() {
   const {authState} = useAuth();
   const { open, setOpen } = useContext(layoutContext);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   const handleLoginClick = () => {
@@ -103,6 +105,14 @@ function Navigation() {
 
   const handleCloseLogoutModal = () => {
     setLogoutModalOpen(false);
+  };
+
+  const handleOpenSignUpModal = () => {
+    setSignUpModalOpen(true);
+  };
+
+  const handleCloseSignUpModal = () => {
+    setSignUpModalOpen(false);
   };
 
   const handleDrawerClose = () => {
@@ -247,7 +257,8 @@ function Navigation() {
     </Drawer>
 
     <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
-    <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} /> 
+    <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} handleOpenSignUp={handleOpenSignUpModal} /> 
+    <SignUpModal open={signUpModalOpen} handleClose={handleCloseSignUpModal} />
     </>
   );
 }

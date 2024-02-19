@@ -1,0 +1,122 @@
+import React from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import { useReducer } from 'react';
+import { signUpReducer, initialState } from '../../reducers/signUpReducer';
+import Alert from '@mui/material/Alert';
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  outline: 'none',
+};
+
+const SignUpModal = ({ open, handleClose }) => {
+    const [state, dispatch] = useReducer(signUpReducer, initialState);
+
+
+    const handleCreateAccount = (event) => {
+        event.preventDefault();
+
+        const name = event.target.username.value;
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+
+        // first check if the passwords match if not just return with an error
+        if (password !== event.target["confirm-password"].value) {
+            dispatch({ type: "SIGNUP_FAILURE", payload: "Passwords do not match" });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('password', password);
+
+        try {
+            fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users`, {
+                method: "POST",
+                body: formData,
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.result === 200) {
+                    dispatch({ type: "SIGNUP_SUCCESS", payload: data.data });
+                    console.log("account created!");
+                    console.log(state.user);
+                    //TODO: use the user account to login and get the token then close this modal
+                } else {
+                    console.log(data.errors[0].msg);
+                    dispatch({ type: "SIGNUP_FAILURE", payload: data.errors[0].msg });
+                }
+            })
+            .catch((error) => {
+                dispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
+            });
+        } catch(error) {
+            dispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
+        }
+    }
+
+    return (
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="sign-up-modal-title"
+            aria-describedby="create-account-modal-description"
+        >
+            <Box sx={modalStyle}>
+                <Typography id="sign-up-modal-title" variant="h6" component="h2">
+                    Create Account
+                </Typography>
+                <form onSubmit={handleCreateAccount}>
+                    <TextField
+                        id="username"
+                        label="Username"
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                    />
+                    <TextField
+                        id="email"
+                        label="Email"
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                    />
+                    <TextField
+                        id="password"
+                        label="Password"
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                    />
+                    <TextField
+                        id="confirm-password"
+                        label="Confirm Password"
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                    />
+                    {state.error && <Alert severity="error">{state.error}</Alert>}
+                    <Button sx={{marginTop: 2}} type="submit" variant="contained">Create Account</Button>
+                </form>
+            </Box>
+        </Modal>
+    );
+};
+
+export default SignUpModal;

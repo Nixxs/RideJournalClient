@@ -23,7 +23,7 @@ const modalStyle = {
   outline: 'none',
 };
 
-const LoginModal = ({ open, handleClose }) => {
+const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
     const { authState: {error}, dispatch } = useAuth(); 
     const [createAccountOpen, setCreateAccountOpen] = useState(false);
 
@@ -41,7 +41,7 @@ const LoginModal = ({ open, handleClose }) => {
     }
 
     const handleCreateAccountOpen = () => {
-        console.log("Open create account form/modal here");
+        handleOpenSignUp();
         setCreateAccountOpen(true); // Example toggle
         handleClose(); // You might want to close the login modal
     };

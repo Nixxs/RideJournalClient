@@ -5,7 +5,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { useEffect, useReducer, useState } from "react";
 import { likeReducer, initialState } from "../../reducers/likeReducer";
 import { useAuth } from "../../features/AuthManager";
-import GenericModal from "../GenericModal";
+import NotificationModal from "../NotificationModal";
 
 function LikeEvent({ eventId, likeData }) {
   const { authState } = useAuth();
@@ -122,7 +122,7 @@ function LikeEvent({ eventId, likeData }) {
         </Tooltip>
       ) : null}
 
-      <GenericModal 
+      <NotificationModal 
         open={open} 
         handleClose={handlecloseModal}
         title={"Login Required"}

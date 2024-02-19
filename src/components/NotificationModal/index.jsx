@@ -17,7 +17,7 @@ const modalStyle = {
   outline: 'none',
 };
 
-const GenericModal = ({ open, handleClose, title, message }) => {
+const NotificationModal = ({ open, handleClose, title, message }) => {
   return (
     <Modal
       open={open}
@@ -40,4 +40,4 @@ const GenericModal = ({ open, handleClose, title, message }) => {
   );
 };
 
-export default GenericModal;
+export default NotificationModal;
