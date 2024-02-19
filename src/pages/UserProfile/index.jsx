@@ -7,7 +7,7 @@ function UserProfile() {
     const { id } = useParams();
 
     useEffect(() => {
-        setPageTitle('My Vehicles');
+        setPageTitle('Profile');
     }, [setPageTitle]);
 
     return (

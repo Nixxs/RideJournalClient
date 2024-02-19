@@ -25,6 +25,7 @@ import LoginModal from "../LoginModal";
 import UserAvatar from "../UserAvatar";
 import LogoutModal from "../LogoutModal";
 import SignUpModal from "../SignUpModal";
+import NotificationModal from "../NotificationModal";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -90,6 +91,15 @@ function Navigation() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [notificationModalOpen, setnotificationModalOpen] = useState(false);
+
+  const handleCloseNotificationModal = () => {
+    setnotificationModalOpen(false);
+  }
+
+  const handleOpenNotificationModal = () => {
+    setnotificationModalOpen(true);
+  }
 
   const handleLoginClick = () => {
     setLoginModalOpen(true);
@@ -256,9 +266,16 @@ function Navigation() {
       </Box>
     </Drawer>
 
+    <NotificationModal 
+      open={notificationModalOpen} 
+      handleClose={handleCloseNotificationModal} 
+      title="Welcome to Ride Journal"
+      message="You're all signed up! you can now like, view/post comments and manage your vehicles and profile." 
+    />
+
     <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
     <LoginModal open={loginModalOpen} handleClose={handleCloseLoginModal} handleOpenSignUp={handleOpenSignUpModal} /> 
-    <SignUpModal open={signUpModalOpen} handleClose={handleCloseSignUpModal} />
+    <SignUpModal open={signUpModalOpen} handleClose={handleCloseSignUpModal} handleOpenNotification={handleOpenNotificationModal} />
     </>
   );
 }

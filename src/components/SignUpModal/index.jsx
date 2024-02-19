@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import { useReducer } from 'react';
 import { signUpReducer, initialState } from '../../reducers/signUpReducer';
 import Alert from '@mui/material/Alert';
+import { useAuth } from '../../features/AuthManager';
+import { login } from '../../features/AuthManager';
 
 const modalStyle = {
   position: 'absolute',
@@ -20,9 +22,9 @@ const modalStyle = {
   outline: 'none',
 };
 
-const SignUpModal = ({ open, handleClose }) => {
-    const [state, dispatch] = useReducer(signUpReducer, initialState);
-
+const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
+    const { authState: {error}, dispatch: authDispatch } = useAuth(); 
+    const [state, signUpDispatch] = useReducer(signUpReducer, initialState);
 
     const handleCreateAccount = (event) => {
         event.preventDefault();
@@ -33,7 +35,7 @@ const SignUpModal = ({ open, handleClose }) => {
 
         // first check if the passwords match if not just return with an error
         if (password !== event.target["confirm-password"].value) {
-            dispatch({ type: "SIGNUP_FAILURE", payload: "Passwords do not match" });
+            signUpDispatch({ type: "SIGNUP_FAILURE", payload: "Passwords do not match" });
             return;
         }
 
@@ -50,20 +52,21 @@ const SignUpModal = ({ open, handleClose }) => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.result === 200) {
-                    dispatch({ type: "SIGNUP_SUCCESS", payload: data.data });
-                    console.log("account created!");
-                    console.log(state.user);
-                    //TODO: use the user account to login and get the token then close this modal
+                    const userData = data.data;
+                    signUpDispatch({ type: "SIGNUP_SUCCESS", payload: userData })
+                    login(authDispatch, email, password);
+                    handleClose();
+                    handleOpenNotification();
                 } else {
                     console.log(data.errors[0].msg);
-                    dispatch({ type: "SIGNUP_FAILURE", payload: data.errors[0].msg });
+                    signUpDispatch({ type: "SIGNUP_FAILURE", payload: data.errors[0].msg });
                 }
             })
             .catch((error) => {
-                dispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
+                signUpDispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
             });
         } catch(error) {
-            dispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
+            signUpDispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
         }
     }
 

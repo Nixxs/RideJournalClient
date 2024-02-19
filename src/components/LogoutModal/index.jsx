@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import { useAuth } from '../../features/AuthManager';
 import { logout } from '../../features/AuthManager';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const modalStyle = {
   position: 'absolute',
@@ -22,20 +23,20 @@ const modalStyle = {
 };
 
 const LogoutModal = ({ open, handleClose }) => {
-    const { authState: {error}, dispatch } = useAuth(); 
+    const navigate = useNavigate();
+    const { authState: {user}, dispatch } = useAuth(); 
     const [createAccountOpen, setUpdateAccountOpen] = useState(false);
 
     const handleLogout = (event) => {
         event.preventDefault();
-
         logout(dispatch);
         handleClose();
     }
 
     const handleUpdateAccount = () => {
-        console.log("Open update account form/modal here");
         setUpdateAccountOpen(true); // Example toggle
         handleClose();
+        navigate(`/profile/${user.id}`);
     };
 
     return (
