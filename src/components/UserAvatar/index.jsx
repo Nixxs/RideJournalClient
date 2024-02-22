@@ -7,7 +7,7 @@ function UserAvatar({userData}) {
   const navigate = useNavigate(); 
 
   const handleClick = (event) => {
-    navigate(`/profile/${event.currentTarget.dataset.id}`);
+    navigate(`/myvehicles/${event.currentTarget.dataset.id}`);
   };
 
   return (
