@@ -34,8 +34,9 @@ const LogoutModal = ({ open, handleClose }) => {
     }
 
     const handleUpdateAccount = () => {
-        setUpdateAccountOpen(true); // Example toggle
+        setUpdateAccountOpen(true);
         handleClose();
+        // TODO: at the momoment this just navigates to the profile page but it should open a modal to update the account
         navigate(`/profile/${user.id}`);
     };
 

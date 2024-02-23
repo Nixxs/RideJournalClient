@@ -42,8 +42,8 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
 
     const handleCreateAccountOpen = () => {
         handleOpenSignUp();
-        setCreateAccountOpen(true); // Example toggle
-        handleClose(); // You might want to close the login modal
+        setCreateAccountOpen(true); 
+        handleClose(); 
     };
 
     return (

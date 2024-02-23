@@ -15,7 +15,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { styled, useTheme } from "@mui/material/styles";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
 import { NavLink } from "react-router-dom";
@@ -80,7 +80,7 @@ const pages = [
 ];
 
 const actions = [
-  { name: 'My Vehicles', path: '/profile/1' , icon: <DirectionsCarFilledRoundedIcon />},
+  { name: 'My Vehicles', path: '/myvehicles/1' , icon: <DirectionsCarFilledRoundedIcon />},
   { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
 ];
 
