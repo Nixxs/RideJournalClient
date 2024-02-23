@@ -29,6 +29,7 @@ services:
       - PORT=${PORT}
       - CLIENT_URL=${CLIENT_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - SERVER_ENV=${SERVER_ENV}
     ports:
       - '3000:3000'
     depends_on:
