@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import YoutubeIcon from '@mui/icons-material/Youtube';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import GithubIcon from '@mui/icons-material/Github';
 import Link from '@mui/material/Link';
 
@@ -32,7 +32,7 @@ function Footer() {
             <Typography variant="body2" color="textSecondary" align="center" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, fontSize: '0.8em' }}>
                 Follow Us On:
                 <Link href="https://twitter.com" target="_blank" color="inherit"><TwitterIcon /></Link>
-                <Link href="https://youtube.com" target="_blank" color="inherit"><YoutubeIcon /></Link>
+                <Link href="https://youtube.com" target="_blank" color="inherit"><YouTubeIcon /></Link>
                 <Link href="https://Github.com/nixxs" target="_blank" color="inherit"><GithubIcon /></Link>
             </Typography>
         </Box>
