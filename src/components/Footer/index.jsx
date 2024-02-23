@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import GithubIcon from '@mui/icons-material/Github';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import Link from '@mui/material/Link';
 
 function Footer() {
@@ -33,7 +33,7 @@ function Footer() {
                 Follow Us On:
                 <Link href="https://twitter.com" target="_blank" color="inherit"><TwitterIcon /></Link>
                 <Link href="https://youtube.com" target="_blank" color="inherit"><YouTubeIcon /></Link>
-                <Link href="https://Github.com/nixxs" target="_blank" color="inherit"><GithubIcon /></Link>
+                <Link href="https://Github.com/nixxs" target="_blank" color="inherit"><GitHubIcon /></Link>
             </Typography>
         </Box>
     );
