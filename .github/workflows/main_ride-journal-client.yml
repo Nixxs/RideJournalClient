@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - ride-journal-client
 
 on:
@@ -24,13 +27,8 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - name: Move dist to a new folder for deployment
-        run: |
-          mkdir deploy
-          mv dist/* deploy/
-
       - name: Zip artifact for deployment
-        run: zip -r release.zip deploy/
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -69,4 +67,5 @@ jobs:
         with:
           app-name: 'ride-journal-client'
           slot-name: 'Production'
-          package: release.zip
+          package: .
+          
