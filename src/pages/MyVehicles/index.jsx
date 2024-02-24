@@ -19,8 +19,6 @@ import Button from "@mui/material/Button";
 import { useAuth } from "../../features/AuthManager";
 import CreateVehicleModal from "../../modals/CreateVehicleModal";
 
-
-
 function MyVehicles() {
     const { authState } = useAuth();
     const [state, dispatch] = useReducer(myVehiclesReducer, initialState);
@@ -29,6 +27,7 @@ function MyVehicles() {
     const { setPageTitle } = useContext(layoutContext);
     const { id } = useParams();
     const [isOwner, setIsOwner] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
 
     const handleCloseUpdateProfileModal = () => {
       setUpdateProfileModalOpen(false);
@@ -46,35 +45,39 @@ function MyVehicles() {
       setAddVehicleModalOpen(false)
     };
 
+    const handleRefreshData = () => {
+      setRefreshData(true);
+    }
+
     useEffect(() => {
+      setRefreshData(false);
 
-        if (authState.isAuthenticated && authState.user.id == Number(id)) {
-            setIsOwner(true);
-        } else {
-            setIsOwner(false);
+      if (authState.isAuthenticated && authState.user.id == Number(id)) {
+          setIsOwner(true);
+      } else {
+          setIsOwner(false);
+      }
+
+      fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${id}/vehicles`)
+      .then((response) => response.json())
+      .then((data) => {
+        switch (data.result) {
+          case 200:
+            dispatch({ type: "GET_USER_VEHICLES_SUCCESS", payload: data.data });
+            setPageTitle(`${data.data.name}'s Vehicles`);
+            break;
+          case 404:
+            dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: "User not found" });
+            break;
+          default:
+            dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: data.message });
+            break;
         }
-
-        fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${id}/vehicles`)
-        .then((response) => response.json())
-        .then((data) => {
-          switch (data.result) {
-            case 200:
-              dispatch({ type: "GET_USER_VEHICLES_SUCCESS", payload: data.data });
-              setPageTitle(`${data.data.name}'s Vehicles`);
-              break;
-            case 404:
-              dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: "User not found" });
-              break;
-            default:
-              dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: data.message });
-              break;
-          }
-        })
-        .catch((error) =>
-          dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: error.message })
-        );
-    }, [setPageTitle, id, authState]);
-
+      })
+      .catch((error) =>
+        dispatch({ type: "GET_USER_VEHICLES_FAILURE", payload: error.message })
+      );
+    }, [setPageTitle, id, authState, refreshData]);
 
     function UserVehicleList({vehicles}) {
       const [expandedProfiles, setExpandedProfiles] = useState({});
@@ -201,6 +204,7 @@ function MyVehicles() {
             open={addVehicleModalOpen} 
             handleClose={handleCloseAddVehicleModal}
             userVehiclesDispatch={dispatch} 
+            handleRefreshData={handleRefreshData}
           />
       </>
     );
