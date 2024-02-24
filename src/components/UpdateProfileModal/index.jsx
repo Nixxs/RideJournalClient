@@ -39,17 +39,50 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
         }
     }, [authState]);
 
-    const handleUserProfileUpdate = (event) => {
+    const handleUserProfileUpdate = async (event) => {
         event.preventDefault();
 
         const username = event.target.name.value;
         const profile = event.target.profile.value;
+        const image = fileInputRef.current.files[0];
+
+        let formData = new FormData();
+        formData.append("name", username);
+        formData.append("profile", profile);
+        if (image) {
+            formData.append("image", image); // Only append if an image is selected
+        }
 
         // Implementation
         console.log("handle the put request to update the user profile");
-        
-        userVehiclesDispatch({ type: "UPDATE_USER_PROFILE_SUCCESS", payload: {"name" : username, "profile": profile} });
+        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${authState.user.id}`, {
+            method: "PUT",
+            headers: {
+                // "Content-Type": "multipart/form-data" is not required here; the browser will automatically set it along with the correct boundary
+                "authorization": `${authState.token}` // our backend doesn't use bearer token it just takes the token
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            userVehiclesDispatch({ 
+                type: "UPDATE_USER_PROFILE_SUCCESS", 
+                payload: {name: username, profile: profile, image: data.data.image} // Assuming 'data.image' is how your backend returns the path of the uploaded image
+            });
 
+            dispatch({
+                type: "UPDATE_USER_PROFILE_SUCCESS",
+                payload: {name: username, profile: profile, image: data.data.image}
+            });
+            handleClose();
+        })
+        .catch((error) => {
+            userVehiclesDispatch({ 
+                type: "UPDATE_USER_PROFILE_FAILURE", 
+                payload: error.message 
+            });
+        });
+    
         handleClose();
     };
 
@@ -104,6 +137,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                             label="Username"
                             variant="outlined"
                             margin="normal"
+                            value={authState.user.name}
                             fullWidth
                         />
                         <TextField
@@ -111,6 +145,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                             label="Profile"
                             variant="outlined"
                             margin="normal"
+                            value={authState.user.profile}
                             fullWidth
                             multiline
                             rows={7}

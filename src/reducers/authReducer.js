@@ -23,6 +23,16 @@ export const authReducer = (state, action) => {
       };
     case "LOGOUT":
       return { ...state, isAuthenticated: false, user: null, token: null };
+    case "UPDATE_USER_PROFILE_SUCCESS":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          name: action.payload.name,
+          profile: action.payload.profile,
+          image: action.payload.image,
+        },
+      };
     default:
       return state;
   }
