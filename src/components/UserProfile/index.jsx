@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -6,13 +5,12 @@ import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import { useAuth } from "../../features/AuthManager";
-import { useState } from 'react';
 
 function UserProfile({ userData, openUpdateUserProfileModal }) {
   const { authState } = useAuth();
 
   return (
-    <Card sx={{ display: 'flex', width: '100%', height: '100%', marginRight: 3, maxHeight: "240px", maxWidth: "75vw" }}>
+    <Card sx={{ display: 'flex', width: '100%', height: '100%', marginRight: 3, maxHeight: "240px"}}>
       <Box
         sx={{
           width: '30%',

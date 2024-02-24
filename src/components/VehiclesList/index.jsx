@@ -26,7 +26,7 @@ function VehicleList({vehicles}) {
     };
 
     return (
-      <Box sx={{ maxWidth: 1280 }}>
+      <Box sx={{ maxWidth: "75vw" }}>
         <Grid container spacing={3}>
           {vehicles.map((vehicle) => (
             <Grid item xs={12} sm={6} md={4} key={vehicle.id}>
