@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
+import { layoutContext } from "../../layouts";
 
 const modalStyle = {
   position: 'absolute',
@@ -29,15 +30,28 @@ const modalStyle = {
 
 const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
     const theme = useTheme();
+    const { setPageTitle } = useContext(layoutContext);
     const { authState, dispatch } = useAuth(); 
     const [imagePreview, setImagePreview] = useState(null);
+    const [username, setUsername] = useState(null); 
+    const [profile, setProfile] = useState(null);
     const fileInputRef = useRef(null); 
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
             setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${authState.user.image}`);
+            setUsername(authState.user.name);
+            setProfile(authState.user.profile);
         }
     }, [authState]);
+
+    const onUsernameChange = (event) => {
+        setUsername(event.target.value)
+    }
+
+    const onProfileChange = (event) => {
+        setProfile(event.target.value)
+    }
 
     const handleUserProfileUpdate = async (event) => {
         event.preventDefault();
@@ -53,8 +67,6 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
             formData.append("image", image); // Only append if an image is selected
         }
 
-        // Implementation
-        console.log("handle the put request to update the user profile");
         await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${authState.user.id}`, {
             method: "PUT",
             headers: {
@@ -74,6 +86,8 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                 type: "UPDATE_USER_PROFILE_SUCCESS",
                 payload: {name: username, profile: profile, image: data.data.image}
             });
+
+            setPageTitle(username);
             handleClose();
         })
         .catch((error) => {
@@ -137,7 +151,8 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                             label="Username"
                             variant="outlined"
                             margin="normal"
-                            value={authState.user.name}
+                            value={username}
+                            onChange={onUsernameChange}
                             fullWidth
                         />
                         <TextField
@@ -145,7 +160,8 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                             label="Profile"
                             variant="outlined"
                             margin="normal"
-                            value={authState.user.profile}
+                            value={profile}
+                            onChange={onProfileChange}
                             fullWidth
                             multiline
                             rows={7}
