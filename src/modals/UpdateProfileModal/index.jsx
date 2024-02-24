@@ -11,23 +11,6 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import { layoutContext } from "../../layouts";
 
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  minWidth: "600px",
-  minHeight: "200px",
-  maxHeight: "500px",
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-  outline: 'none',
-  display: 'flex', 
-  flexDirection: 'row', 
-  alignItems: 'stretch', 
-};
-
 const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
     const theme = useTheme();
     const { setPageTitle } = useContext(layoutContext);
@@ -114,7 +97,23 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
 
     return (
         <Modal open={open} onClose={handleClose}>
-            <Box sx={modalStyle}>
+            <Box sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: { xs: '100%', sm: '90%', md: '75%' }, // Adjust width based on screen size
+                maxWidth: '900px', // Ensure modal doesn't exceed this width on larger screens
+                maxHeight: '600px',
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                outline: 'none',
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' }, // Stack elements vertically on small screens, horizontally on larger screens
+                alignItems: 'stretch',
+                overflow: 'auto' // Allow modal to be scrollable if content exceeds height
+            }}>
                 <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
                     {imagePreview ? 
                         <img 
