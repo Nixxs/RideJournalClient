@@ -101,6 +101,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                     <TextField
                         id="password"
                         label="Password"
+                        type="password"
                         variant="outlined"
                         margin="normal"
                         required
@@ -109,6 +110,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                     <TextField
                         id="confirm-password"
                         label="Confirm Password"
+                        type="password"
                         variant="outlined"
                         margin="normal"
                         required

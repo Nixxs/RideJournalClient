@@ -10,16 +10,6 @@ import { useState } from 'react';
 
 function UserProfile({ userData, openUpdateUserProfileModal }) {
   const { authState } = useAuth();
-  const [isOwner, setIsOwner] = useState(false);
-
-  useEffect(() => {
-    if (authState.isAuthenticated) {
-        if (authState.user.id === userData.id) {
-          setIsOwner(true);
-        }
-      }
-  }, [authState, isOwner, setIsOwner, userData]);
-
 
   return (
     <Card sx={{ display: 'flex', width: '100%', height: '100%', marginRight: 3, maxHeight: "240px", maxWidth: "75vw" }}>
@@ -42,7 +32,7 @@ function UserProfile({ userData, openUpdateUserProfileModal }) {
             <Typography variant="h5" component="div" sx={{ mb: 2 }}>
                 {userData.name} 
             </Typography>
-            {isOwner && 
+            {authState.isAuthenticated && authState.user.id === userData.id && 
                 <Button 
                     variant='outlined'
                     onClick={openUpdateUserProfileModal}

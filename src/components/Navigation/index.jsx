@@ -15,7 +15,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
 import { styled, useTheme } from "@mui/material/styles";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
 import { NavLink } from "react-router-dom";
@@ -74,15 +74,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const pages = [
-  { name: 'Vehicles', path: '/vehicles' , icon: <DirectionsCarFilledOutlinedIcon />},
-  { name: 'Events', path: '/events', icon: <AutoStoriesOutlinedIcon />},
-];
 
-const actions = [
-  { name: 'My Vehicles', path: '/myvehicles/1' , icon: <DirectionsCarFilledRoundedIcon />},
-  { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />},
-];
 
 function Navigation() {
   const theme = useTheme();
@@ -91,7 +83,25 @@ function Navigation() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [actions, setActions] = useState([]);
   const [notificationModalOpen, setnotificationModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+      const authActions = [
+        { name: 'My Vehicles', path: `/myvehicles/${authState.user.id}` , icon: <DirectionsCarFilledRoundedIcon />},
+        { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />} 
+      ];
+      setActions(authActions);
+    } else {
+      setActions([]);
+    }
+  }, [authState]);
+
+  const pages = [
+    { name: 'Vehicles', path: '/vehicles' , icon: <DirectionsCarFilledOutlinedIcon />},
+    { name: 'Events', path: '/events', icon: <AutoStoriesOutlinedIcon />},
+  ];
 
   const handleCloseNotificationModal = () => {
     setnotificationModalOpen(false);
