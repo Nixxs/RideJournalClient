@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { myVehiclesReducer, initialState } from "../../reducers/myVehiclesReducer";
 import GridItem from "../../components/GridItem";
 import UserProfile from "../../components/UserProfile";
-import UpdateProfileModal from "../../components/UpdateProfileModal";
+import UpdateProfileModal from "../../modals/UpdateProfileModal";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";

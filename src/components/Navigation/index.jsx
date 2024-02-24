@@ -21,11 +21,11 @@ import { drawerWidth } from "../../layouts";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../features/AuthManager";
 import Box from "@mui/material/Box";
-import LoginModal from "../LoginModal";
+import LoginModal from "../../modals/LoginModal";
 import UserAvatar from "../UserAvatar";
-import LogoutModal from "../LogoutModal";
-import SignUpModal from "../SignUpModal";
-import NotificationModal from "../NotificationModal";
+import LogoutModal from "../../modals/LogoutModal";
+import SignUpModal from "../../modals/SignUpModal";
+import NotificationModal from "../../modals/NotificationModal";
 
 const openedMixin = (theme) => ({
   width: drawerWidth,

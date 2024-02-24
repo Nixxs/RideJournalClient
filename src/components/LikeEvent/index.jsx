@@ -5,7 +5,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { useEffect, useReducer, useState } from "react";
 import { likeReducer, initialState } from "../../reducers/likeReducer";
 import { useAuth } from "../../features/AuthManager";
-import NotificationModal from "../NotificationModal";
+import NotificationModal from "../../modals/NotificationModal";
 
 function LikeEvent({ eventId, likeData }) {
   const { authState } = useAuth();
