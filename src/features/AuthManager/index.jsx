@@ -1,5 +1,6 @@
-import { createContext, useReducer, useContext } from "react";
+import { createContext, useReducer, useContext, useEffect } from "react";
 import { authReducer, initialState } from "../../reducers/authReducer";
+import { setItem, getItem, clearStorage } from "../../utils/storage";
 
 const AuthContext = createContext();
 
@@ -16,6 +17,7 @@ const login = async (dispatch, email, password) => {
         const data = await response.json();
         if (data.result === 200) {
             dispatch({ type: "LOGIN_SUCCESS", payload: data.data });
+            setItem('authState', JSON.stringify(data.data));
             return("success");
         } else {
             dispatch({ type: "LOGIN_FAILURE", payload: data.errors });
@@ -27,11 +29,20 @@ const login = async (dispatch, email, password) => {
 }
 
 const logout = (dispatch) => {
+    clearStorage();
     dispatch({ type: "LOGOUT" });
 }
 
 const AuthProvider = ({ children }) => {
     const [authState, dispatch] = useReducer(authReducer, initialState);
+
+    useEffect(() => {
+        const storedAuthState = getItem('authState');
+        if (storedAuthState) {
+            dispatch({ type: "LOGIN_SUCCESS", payload: JSON.parse(storedAuthState) });
+        }
+    }, []);
+
     return (
         <AuthContext.Provider value={{ authState, dispatch }}>
             {children}
