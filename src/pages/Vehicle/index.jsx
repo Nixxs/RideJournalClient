@@ -15,6 +15,11 @@ function Vehicle() {
     const { setPageTitle } = useContext(layoutContext);
     const [vehicleDetailsState, vehicleDetailsDispatch] = useReducer(vehicleDetailsReducer, initialState);
     const [refreshData, setRefreshData] = useState(false);
+    const [selectedEventId, setSelectedEventId] = useState(1);
+
+    const updateSelectedEventId = (eventId) => {
+      setSelectedEventId(eventId);
+    }
 
     const handleRefreshData = () => {
       setRefreshData(true);
@@ -38,6 +43,10 @@ function Vehicle() {
             case 200:
               vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_SUCCESS", payload: vehicleData.data });
               setPageTitle(`Vehicle Timeline - ${vehicleData.data.name}`); // !!!this is cuausing a double render!!!
+              
+              if (vehicleData.data.Events.length > 0){
+                updateSelectedEventId(vehicleData.data.Events[0].id);
+              }
               break;
             case 404:
               vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.message });
@@ -70,23 +79,32 @@ function Vehicle() {
 
                 <Box sx={{
                   display: "flex",
-                  flexDirection: "row",
-                  marginTop: 1
+                  flexDirection: { xs: "column", md: "row" },
+                  marginTop: 1,
+                  gap: 2,
                 }}>
                   <Box sx={{
-                    flex: "0 0 30%",
-                    marginRight: 3
+                    flex: { xs: "1 1 auto", md: "0 0 30%" },
+                    marginRight: { md: 3 },
+                    marginTop: 2,
+                    marginBottom: 2,
+                    maxHeight: "700px",
+                    overflow: "auto"
                   }}>
-                    <VehicleTimeline />
+                    <VehicleTimeline 
+                      vehicleEvents={vehicleDetailsState.vehicleDetails.Events}  
+                      updateEventCard={updateSelectedEventId}
+                    />
                   </Box>
                   <Box sx={{
-                    flex: "1 1 70%"
+                    flex: { xs: "1 1 auto", md: "1 1 70%" },
+                    marginTop: { xs: 0, md: 2 },
+                    marginBottom: 2,
+                    maxHeight: "800px",
                   }}>
-                    <EventCard eventId={1}/>
+                    <EventCard eventId={selectedEventId}/>
                   </Box>
-                  
                 </Box>
-                
 
                 <UpdateVehicleModal 
                   open={updateVehicleModalOpen} 
@@ -96,7 +114,6 @@ function Vehicle() {
                   existingVehicleData={vehicleDetailsState.vehicleDetails}
                 />
              </>
-
             )}
           </Box>
         </GridItem>

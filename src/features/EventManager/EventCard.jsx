@@ -68,7 +68,7 @@ function EventCard({ eventId }) {
       .catch((error) =>
         dispatch({ type: "GET_EVENT_DETAIL_FAILURE", payload: error.message })
       );
-  }, []);
+  }, [eventId]);
 
   const handleNext = () => {
     setCurrentIndex(
