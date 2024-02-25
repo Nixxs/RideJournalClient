@@ -11,7 +11,6 @@ export const myVehiclesReducer = (state, action) => {
                 userVehicles: action.payload,
             }
         case "GET_USER_VEHICLES_FAILURE":
-            console.log(action.payload);
             return {
                 ...state,
                 userVehicles: null,

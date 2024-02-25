@@ -11,17 +11,55 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import Grid from '@mui/material/Grid';
 
-const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRefreshData }) => {
+const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, existingVehicleData }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [imagePreview, setImagePreview] = useState(null);
+    const [name, setName] = useState(null); 
+    const [location, setLocation] = useState(null); 
+    const [year, setYear] = useState(null); 
+    const [make, setMake] = useState(null);
+    const [model, setModel] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [vehicleId, setvehicleId] = useState(null);
     const fileInputRef = useRef(null); 
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
-            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/default.png`);
+            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${existingVehicleData.image}`);
+            setName(existingVehicleData.name);
+            setLocation(existingVehicleData.location);
+            setYear(existingVehicleData.year);
+            setMake(existingVehicleData.make);
+            setModel(existingVehicleData.model);
+            setProfile(existingVehicleData.profile);
+            setvehicleId(existingVehicleData.id);
         }
     }, [authState]);
+
+    const onNameChange = (event) => {
+        setName(event.target.value)
+    }
+
+    const onLocationChange = (event) => {
+        setLocation(event.target.value)
+    }
+
+    const onYearChange = (event) => {
+        setYear(event.target.value)
+    }
+
+    const onMakeChange = (event) => {
+        setMake(event.target.value)
+    }
+
+    const onModelChange = (event) => {
+        setModel(event.target.value)
+    }
+
+    const onProfileChange = (event) => {
+        setProfile(event.target.value)
+    }
 
     const handleVehicleProfileUpdate = async (event) => {
         event.preventDefault();
@@ -47,8 +85,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
             formData.append("image", image); // Only append if an image is selected
         }
 
-        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles`, {
-            method: "POST",
+        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`, {
+            method: "PUT",
             headers: {
                 // "Content-Type": "multipart/form-data" is not required here; the browser will automatically set it along with the correct boundary
                 "authorization": `${authState.token}` 
@@ -57,17 +95,17 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
         })
         .then(response => response.json())
         .then(data => {
-            userVehiclesDispatch({ 
-                type: "ADD_VEHICLE_SUCCESS", 
+            vehicleDetailsDispatch({ 
+                type: "UPDATE_VEHICLE_DETAIL_SUCCESS", 
                 payload: data
             });
             handleRefreshData();
             handleClose();
         })
         .catch((error) => {
-            userVehiclesDispatch({ 
-                type: "ADD_VEHICLE_FAILURE", 
-                payload: error[0].msg
+            vehicleDetailsDispatch({ 
+                type: "UPDATE_VEHICLE_DETAIL_FAILURE", 
+                payload: error
             });
         });
     
@@ -133,7 +171,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                 </Box>
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
                     <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
-                        Create Vehicle
+                        Update Vehicle
                     </Typography>
                     <form onSubmit={handleVehicleProfileUpdate} noValidate>
                         <Grid container spacing={1}>
@@ -143,6 +181,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     label="Vehicle Name"
                                     variant="outlined"
                                     margin="normal"
+                                    value={name}
+                                    onChange={onNameChange}
                                     fullWidth
                                 />
                             </Grid>
@@ -152,6 +192,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     label="Location"
                                     variant="outlined"
                                     margin="normal"
+                                    value={location}
+                                    onChange={onLocationChange}
                                     fullWidth
                                 />
                             </Grid>
@@ -162,6 +204,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     type="number"
                                     variant="outlined"
                                     margin="normal"
+                                    value={year}
+                                    onChange={onYearChange}
                                     fullWidth
                                     inputProps={{ min: 1900, max: new Date().getFullYear() }}
                                 />
@@ -172,6 +216,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     label="Make"
                                     variant="outlined"
                                     margin="normal"
+                                    value={make}
+                                    onChange={onMakeChange}
                                     fullWidth
                                 />
                             </Grid>
@@ -181,6 +227,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     label="Model"
                                     variant="outlined"
                                     margin="normal"
+                                    value={model}
+                                    onChange={onModelChange}
                                     fullWidth
                                 />
                             </Grid>
@@ -190,6 +238,8 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     label="Profile"
                                     variant="outlined"
                                     margin="normal"
+                                    value={profile}
+                                    onChange={onProfileChange}
                                     fullWidth
                                     multiline
                                     rows={5}
@@ -203,7 +253,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                             color="primary"
                             fullWidth
                         >
-                            Create
+                            Update
                         </Button>
                         {authState.error && <Alert severity="error">{authState.error}</Alert>}
                     </form>
@@ -222,4 +272,4 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
     );
 };
 
-export default CreateVehicleModal;
+export default UpdateVehicleModal;

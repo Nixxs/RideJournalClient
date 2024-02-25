@@ -11,7 +11,6 @@ export const eventDetailsReducer = (state, action) => {
                 eventDetails: action.payload
             }
         case "GET_EVENT_DETAIL_FAILURE":
-            console.log(action.payload);
             return {
                 ...state,
                 eventDetails: null,
