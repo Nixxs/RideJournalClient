@@ -32,17 +32,20 @@ function EventManager() {
     },[]);
 
     const EventList = () => {
-        return (
-            <div>
-                {state.events.map((event) => (
-                    <EventCard key={event.id} eventId={event.id}/>
-                ))}
-            </div>
-        );
+      return (
+        state.events.map((event) => (
+          <Box sx={{
+            marginBottom: 2,
+            maxWidth: "75vw"
+          }}>
+            <EventCard key={event.id} eventId={event.id}/>
+          </Box>
+        ))
+      );
     }
 
     return (
-        <Box sx={{ paddingBottom: 2, paddingRight: 2 }}>
+        <Box sx={{ paddingBottom: 2, paddingRight: 2}}>
         {state.error && <Alert severity="error">{state.error}</Alert>}
             <EventList />
         </Box>

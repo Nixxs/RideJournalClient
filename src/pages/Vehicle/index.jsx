@@ -6,6 +6,8 @@ import GridItem from "../../components/GridItem";
 import VehicleProfile from "../../components/VehicleProfile";
 import { vehicleDetailsReducer, initialState } from "../../reducers/vehicleDetailsReducer";
 import UpdateVehicleModal from "../../modals/UpdateVehicleModal";
+import VehicleTimeline from "../../components/VehicleTimeline";
+import EventCard from "../../features/EventManager/EventCard";
 
 function Vehicle() {
     const [updateVehicleModalOpen, setUpdateVehicleModalOpen] = useState(false); 
@@ -65,6 +67,26 @@ function Vehicle() {
                   vehicleData={vehicleDetailsState.vehicleDetails} 
                   openUpdateVehicleProfileModal={handleOpenUpdateVehicleModal}
                 />
+
+                <Box sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  marginTop: 1
+                }}>
+                  <Box sx={{
+                    flex: "0 0 30%",
+                    marginRight: 3
+                  }}>
+                    <VehicleTimeline />
+                  </Box>
+                  <Box sx={{
+                    flex: "1 1 70%"
+                  }}>
+                    <EventCard eventId={1}/>
+                  </Box>
+                  
+                </Box>
+                
 
                 <UpdateVehicleModal 
                   open={updateVehicleModalOpen} 

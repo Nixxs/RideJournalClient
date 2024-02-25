@@ -107,11 +107,9 @@ function EventCard({ eventId }) {
         display: "flex",
         flexDirection: "column",
         minHeight: "50vh",
-        maxWidth: "900px",
+        maxWidth: "75vw",
         minWidth: 300,
-        m: 2,
-        marginLeft: 0,
-        padding: 0,
+
         // If you want the image to take full width on small screens
         "& > div": { width: "100%" },
       }}
