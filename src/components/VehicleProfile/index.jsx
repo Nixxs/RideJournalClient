@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import { useAuth } from "../../features/AuthManager";
+import UserAvatar from "../UserAvatar";
 
 function VehicleProfile({ vehicleData, openUpdateVehicleProfileModal }) {
   const { authState } = useAuth();
@@ -27,9 +28,17 @@ function VehicleProfile({ vehicleData, openUpdateVehicleProfileModal }) {
       </Box>
       <CardContent sx={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
         <Box sx={{display: "flex", flexDirection: "row"}}>
-            <Typography variant="h5" component="div" sx={{ mb: 2 }}>
-                {vehicleData.name} 
-            </Typography>
+            <Box sx={{flex: "1"}}>
+                <Typography variant="h5" component="div" sx={{ mb: 1 }}>
+                    {vehicleData.name} - {vehicleData.make} {vehicleData.model} ({vehicleData.year})
+                </Typography>
+                <Box sx={{display: "flex", alignItems: "center", flexDirection:"row", flex:"1", marginBottom:2}}> 
+                    <UserAvatar userData={vehicleData.User}/>
+                    <Typography variant="subtitle1" sx={{ marginLeft: 2 }}>
+                        Location: {vehicleData.location}
+                    </Typography>
+                </Box>
+            </Box>
             {authState.isAuthenticated && authState.user.id === vehicleData.User.id && 
                 <Button 
                     variant='outlined'
@@ -45,7 +54,6 @@ function VehicleProfile({ vehicleData, openUpdateVehicleProfileModal }) {
                     Edit Profile
                 </Button>
             }
-
         </Box>
         <Typography variant="body2" sx={{ overflow: 'auto', maxHeight: 200, whiteSpace: 'pre-wrap' }}>
           {vehicleData.profile}
