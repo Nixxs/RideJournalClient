@@ -45,9 +45,9 @@ function VehicleProfile({ vehicleData, openUpdateVehicleProfileModal }) {
                     onClick={openUpdateVehicleProfileModal}
                     sx={{
                         marginLeft: "auto",
-                        padding: "3px 10px", // Reduces vertical padding, adjusts horizontal padding
-                        minHeight: "0", // Allows the button to be smaller in height
-                        height: "fit-content", // Ensures the button height only fits its content
+                        padding: "3px 10px", 
+                        minHeight: "0", 
+                        height: "fit-content", 
                     }}
                     size="small"
                 >

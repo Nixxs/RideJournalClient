@@ -8,6 +8,7 @@ import { vehicleDetailsReducer, initialState } from "../../reducers/vehicleDetai
 import UpdateVehicleModal from "../../modals/UpdateVehicleModal";
 import VehicleTimeline from "../../components/VehicleTimeline";
 import EventCard from "../../features/EventManager/EventCard";
+import CreateEventModal from "../../modals/CreateEventModal";
 
 function Vehicle() {
     const [updateVehicleModalOpen, setUpdateVehicleModalOpen] = useState(false); 
@@ -16,6 +17,7 @@ function Vehicle() {
     const [vehicleDetailsState, vehicleDetailsDispatch] = useReducer(vehicleDetailsReducer, initialState);
     const [refreshData, setRefreshData] = useState(false);
     const [selectedEventId, setSelectedEventId] = useState(1);
+    const [createEventModalOpen, setCreateEventModalOpen] = useState(false);
 
     const updateSelectedEventId = (eventId) => {
       setSelectedEventId(eventId);
@@ -32,6 +34,14 @@ function Vehicle() {
     const handleOpenUpdateVehicleModal = () => {
       setUpdateVehicleModalOpen(true)
     };
+
+    const handleCloseCreateEventModal = () => {
+      setCreateEventModalOpen(false);
+    }
+
+    const handleOpenCreateEventModal = () => {
+      setCreateEventModalOpen(true);
+    }
 
     useEffect(() => {
       setRefreshData(false);
@@ -85,15 +95,16 @@ function Vehicle() {
                 }}>
                   <Box sx={{
                     flex: { xs: "1 1 auto", md: "0 0 30%" },
-                    marginRight: { md: 3 },
+                    marginRight: { md: 1 },
                     marginTop: 2,
                     marginBottom: 2,
                     maxHeight: "700px",
                     overflow: "auto"
                   }}>
                     <VehicleTimeline 
-                      vehicleEvents={vehicleDetailsState.vehicleDetails.Events}  
+                      vehicleDetails={vehicleDetailsState.vehicleDetails}  
                       updateEventCard={updateSelectedEventId}
+                      openCreateEventModal={handleOpenCreateEventModal}
                     />
                   </Box>
                   <Box sx={{
@@ -102,7 +113,12 @@ function Vehicle() {
                     marginBottom: 2,
                     maxHeight: "800px",
                   }}>
-                    <EventCard eventId={selectedEventId}/>
+                    {/* if there are no events don't show the event card */}
+                    {vehicleDetailsState.vehicleDetails.Events.length > 0 ? (
+                      <EventCard eventId={selectedEventId}/>
+                    ) : (
+                      <p>No events to display</p>
+                    )}
                   </Box>
                 </Box>
 
@@ -113,12 +129,17 @@ function Vehicle() {
                   handleRefreshData={handleRefreshData}
                   existingVehicleData={vehicleDetailsState.vehicleDetails}
                 />
+
+                <CreateEventModal 
+                  open={createEventModalOpen} 
+                  handleClose={handleCloseCreateEventModal}
+                  vehicleDetailsDispatch={vehicleDetailsDispatch} 
+                  handleRefreshData={handleRefreshData}
+                />
              </>
             )}
           </Box>
         </GridItem>
-
-
       </>
     );
 }
