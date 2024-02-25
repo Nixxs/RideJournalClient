@@ -6,7 +6,7 @@ import Events from "./pages/Events";
 import About from "./pages/About";
 import MyVehicles from "./pages/MyVehicles";
 import NewEvent from "./pages/NewEvent";
-import VehicleProfile from "./pages/VehicleProfile";
+import Vehicle from "./pages/Vehicle";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       {path:"/",element:<Home />},
       {path:"/vehicles", element:<Vehicles />},
-      {path:"/vehicles/:id", element: <VehicleProfile />},
+      {path:"/vehicles/:id", element: <Vehicle />},
       {path:"/events",element:<Events />},
       {path:"/myvehicles/:id",element:<MyVehicles />},
       {path:"/newevent",element:<NewEvent />},
