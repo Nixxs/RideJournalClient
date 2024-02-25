@@ -11,77 +11,112 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
-const CreateEventModal = ({ open, handleClose, userVehiclesDispatch, handleRefreshData }) => {
+
+const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
-    const [imagePreview, setImagePreview] = useState(null);
+    const [images, setImages] = useState([]);
     const fileInputRef = useRef(null); 
+    const [selectedType, setSelectedType] = useState('story');
 
     const eventOptions = ['repair', 'modification', 'story', 'maintenance'];
 
-    useEffect(() => {
-        if (authState.isAuthenticated && authState.user.image) {
-            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/default.png`);
-        }
-    }, [authState]);
+    const handleEventTypeChange = (event) => {
+        setSelectedType(event.target.value);
+    };
 
-    const handleVehicleProfileUpdate = async (event) => {
+    useEffect(() => {
+        // Reset images when the modal is opened or closed
+        if (!open) {
+            setImages([]);
+        }
+    }, [open]);
+
+    const handleCreateEvent = async (event) => {
         event.preventDefault();
 
-        const name = event.target.name.value;
-        const location = event.target.location.value;
-        const year = event.target.year.value;
-        const make = event.target.make.value;
-        const model = event.target.model.value;
-        const profile = event.target.profile.value;
-        const image = fileInputRef.current.files[0];
+        const title = event.target.title.value;
+        const type = selectedType;
+        const date = event.target.date.value;
+        const odometer = Number(event.target.odometer.value);
+        const detail = event.target.detail.value;
 
-        let formData = new FormData();
-        formData.append("userId", authState.user.id);
-        formData.append("type", "car");
-        formData.append("name", name);
-        formData.append("location", location);
-        formData.append("year", year);
-        formData.append("make", make);
-        formData.append("model", model);
-        formData.append("profile", profile);
-        if (image) {
-            formData.append("image", image); // Only append if an image is selected
-        }
+        const jsonData = {
+            userId: authState.user.id,
+            vehicleId: 3,
+            title: title,
+            type: type,
+            date: date,
+            odometer: odometer,
+            detail: detail,
+            published: true,
+        };
+        console.log(jsonData);
 
-        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles`, {
+        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events`, {
             method: "POST",
             headers: {
-                // "Content-Type": "multipart/form-data" is not required here; the browser will automatically set it along with the correct boundary
-                "authorization": `${authState.token}` 
+                "Content-Type": "application/json", // Specify the content type as JSON
+                "Authorization": `${authState.token}`, // Ensure proper capitalization of header names
             },
-            body: formData
+            body: JSON.stringify(jsonData)
         })
         .then(response => response.json())
         .then(data => {
-            userVehiclesDispatch({ 
-                type: "ADD_VEHICLE_SUCCESS", 
-                payload: data
+            vehicleDetailsDispatch({ 
+                type: "ADD_EVENT_SUCCESS", 
+                payload: data.data
             });
             handleRefreshData();
             handleClose();
+
+            return data.data.id;
+        })
+        .then(eventId =>{
+            console.log("this is the enentID we are getting", eventId);
+            uploadImages(eventId);
         })
         .catch((error) => {
-            userVehiclesDispatch({ 
-                type: "ADD_VEHICLE_FAILURE", 
-                payload: error[0].msg
+            vehicleDetailsDispatch({ 
+                type: "ADD_EVENT_FAILURE", 
+                payload: error
             });
         });
-    
         handleClose();
     };
 
+    const uploadImages = async (eventId) => {
+        const promises = images.map((image) => {
+            const formData = new FormData();
+            formData.append("image", image.file); 
+            formData.append("eventId", eventId);
+    
+            return fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/images`, { // Adjust the URL to your actual image upload endpoint
+                method: "POST",
+                headers: {
+                    "authorization": `${authState.token}`, // Include other headers as needed, but do NOT set `Content-Type` here
+                },
+                body: formData,
+            })
+            .then(response => response.json());
+        });
+    
+        try {
+            const results = await Promise.all(promises);
+            console.log("Image upload results:", results);
+        } catch (error) {
+            console.error("Error uploading images:", error);
+        }
+    };
+
     const handleImageChange = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            const fileReader = new FileReader();
-            fileReader.onload = (e) => setImagePreview(e.target.result);
-            fileReader.readAsDataURL(event.target.files[0]);
+        const newImage = event.target.files[0];
+        if (newImage) {
+            const newImageUrl = URL.createObjectURL(newImage);
+            setImages((prevImages) => [...prevImages, { id: Date.now(), url: newImageUrl, file: newImage}]);
         }
     };
 
@@ -108,37 +143,35 @@ const CreateEventModal = ({ open, handleClose, userVehiclesDispatch, handleRefre
                 alignItems: 'stretch',
                 overflow: 'auto' // Allow modal to be scrollable if content exceeds height
             }}>
-                <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
-                    {imagePreview ? 
-                        <img 
-                            src={imagePreview} 
-                            alt="User Image" 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover'
-                            }} />
-                        : <div 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                backgroundColor: '#eee' 
-                            }}>
-                                Click to select image
-                        </div>
-                    }
-                    <IconButton sx={{ color: theme.palette.primary.main, position: 'absolute', top: 10, right: 10, backgroundColor: 'white', '&:hover': { backgroundColor: '#f0f0f0' } }}>
-                        <EditIcon />
-                    </IconButton>
+                <Box sx={{ flex: 1, position: 'relative'}}>
+                    <Button onClick={triggerFileInputClick} sx={{ marginBottom: 2 }}>Select Images</Button>
+                    <input
+                        type="file"
+                        multiple
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                    />
+                    {images.length > 0 && (
+                        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+                            {images.map((image) => (
+                                <ImageListItem key={image.id}>
+                                    <img
+                                        src={image.url} // Use the object URL stored in the images state
+                                        alt={`image-${image.id}`}
+                                        loading="lazy"
+                                    />
+                                </ImageListItem>
+                            ))}
+                        </ImageList>
+                    )}
                 </Box>
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
                     <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
                         Create Event (STILL IN DEVELOPMENT)
                     </Typography>
-                    <form onSubmit={handleVehicleProfileUpdate} noValidate>
+                    <form onSubmit={handleCreateEvent} noValidate>
                         <Grid container spacing={1}>
                             <Grid item xs={12} sm={8}>
                                 <TextField
@@ -157,6 +190,8 @@ const CreateEventModal = ({ open, handleClose, userVehiclesDispatch, handleRefre
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    value={selectedType}
+                                    onChange={handleEventTypeChange}
                                 >
                                     {eventOptions.map((option) => (
                                         <MenuItem key={option} value={option}>
@@ -176,7 +211,7 @@ const CreateEventModal = ({ open, handleClose, userVehiclesDispatch, handleRefre
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="Odometer"
+                                    name="odometer"
                                     label="Odometer"
                                     type="number"
                                     variant="outlined"

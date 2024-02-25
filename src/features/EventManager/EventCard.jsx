@@ -151,6 +151,7 @@ function EventCard({ eventId }) {
             </Typography>
           </Box>
         </CardContent>
+        {state.eventDetails.Images.length > 0 && 
         <ImageList
           sx={{
             width: "100%",
@@ -179,6 +180,7 @@ function EventCard({ eventId }) {
             />
           </ImageListItem>
         </ImageList>
+        }
         {state.eventDetails.Images.length > 1 && (
           <>
             <IconButton

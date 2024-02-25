@@ -29,6 +29,22 @@ export const vehicleDetailsReducer = (state, action) => {
                 ...state,
                 error: action.payload
             }
+        case "ADD_EVENT_SUCCESS":
+            return {
+                ...state,
+                vehicleDetails: {
+                    ...state.vehicleDetails,
+                    Events: [
+                        ...state.vehicleDetails.Events,
+                        action.payload
+                    ]
+                }
+            }
+        case "ADD_EVENT_FAILURE":
+            return {
+                ...state,
+                error: action.payload
+            }
         default:
             return state
     }

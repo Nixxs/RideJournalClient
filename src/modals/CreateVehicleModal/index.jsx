@@ -44,6 +44,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
         formData.append("model", model);
         formData.append("profile", profile);
         if (image) {
+            console.log(image)
             formData.append("image", image); // Only append if an image is selected
         }
 
