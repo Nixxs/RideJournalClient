@@ -135,6 +135,7 @@ function Vehicle() {
                   handleClose={handleCloseCreateEventModal}
                   vehicleDetailsDispatch={vehicleDetailsDispatch} 
                   handleRefreshData={handleRefreshData}
+                  vehicleDetailsState={vehicleDetailsState}
                 />
              </>
             )}

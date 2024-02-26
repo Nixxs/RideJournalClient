@@ -34,11 +34,14 @@ function EventManager() {
     const EventList = () => {
       return (
         state.events.map((event) => (
-          <Box sx={{
-            marginBottom: 2,
-            maxWidth: "75vw"
-          }}>
-            <EventCard key={event.id} eventId={event.id}/>
+          <Box 
+            key={event.id} 
+            sx={{
+              marginBottom: 2,
+              maxWidth: "75vw",
+            }}
+          >
+            <EventCard eventId={event.id}/>
           </Box>
         ))
       );

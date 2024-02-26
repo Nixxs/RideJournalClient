@@ -45,6 +45,13 @@ export const vehicleDetailsReducer = (state, action) => {
                 ...state,
                 error: action.payload
             }
+        case "POST_EVENT_IMAGE_SUCCESS":
+            return state
+        case "POST_EVENT_IMAGE_FAILURE":
+            return {
+                ...state,
+                error: action.payload
+            }
         default:
             return state
     }

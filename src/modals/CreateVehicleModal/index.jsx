@@ -136,7 +136,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                     <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
                         Create Vehicle
                     </Typography>
-                    <form onSubmit={handleVehicleProfileUpdate} noValidate>
+                    <form onSubmit={handleVehicleProfileUpdate}>
                         <Grid container spacing={1}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -145,6 +145,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -154,6 +155,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
@@ -164,6 +166,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                     inputProps={{ min: 1900, max: new Date().getFullYear() }}
                                 />
                             </Grid>
@@ -174,6 +177,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
@@ -183,6 +187,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12}>

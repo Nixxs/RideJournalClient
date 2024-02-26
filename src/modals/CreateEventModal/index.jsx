@@ -5,8 +5,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import { useAuth } from '../../features/AuthManager';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import Grid from '@mui/material/Grid';
@@ -15,12 +13,13 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 
-const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData }) => {
+const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, vehicleDetailsState }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [images, setImages] = useState([]);
     const fileInputRef = useRef(null); 
     const [selectedType, setSelectedType] = useState('story');
+    const [error, setError] = useState(null);
 
     const eventOptions = ['repair', 'modification', 'story', 'maintenance'];
 
@@ -33,10 +32,20 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         if (!open) {
             setImages([]);
         }
-    }, [open]);
+
+        // if there is an error in the vehicleDetailsState, set the errors state
+        if (vehicleDetailsState.error) {
+            setError(vehicleDetailsState.error);
+        }
+    }, [open, vehicleDetailsState.error]);
 
     const handleCreateEvent = async (event) => {
         event.preventDefault();
+
+        if (images.length === 0) {
+            setError("Please set at least 1 image for this event");
+            return;
+        }
 
         const title = event.target.title.value;
         const type = selectedType;
@@ -65,19 +74,40 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             body: JSON.stringify(jsonData)
         })
         .then(response => response.json())
-        .then(data => {
-            vehicleDetailsDispatch({ 
-                type: "ADD_EVENT_SUCCESS", 
-                payload: data.data
-            });
-            handleRefreshData();
-            handleClose();
-
-            return data.data.id;
+        .then(eventData => {
+            switch (eventData.result) {
+                case 200:
+                    vehicleDetailsDispatch({ 
+                        type: "ADD_EVENT_SUCCESS", 
+                        payload: eventData.data
+                    });
+                    handleRefreshData();
+        
+                    return eventData.data.id;
+                case 404:
+                    vehicleDetailsDispatch({ 
+                        type: "ADD_EVENT_FAILURE", 
+                        payload: "Event not found"
+                    });
+                    break;
+                case 422:
+                    console.log(eventData.errors);
+                    vehicleDetailsDispatch({ 
+                        type: "ADD_EVENT_FAILURE", 
+                        payload: "data validation error"
+                    });
+                    break;
+                default:
+                    vehicleDetailsDispatch({ 
+                        type: "ADD_EVENT_FAILURE", 
+                        payload: "Unknown error"
+                    });
+                    break;
+            }
         })
         .then(eventId =>{
-            console.log("this is the enentID we are getting", eventId);
             uploadImages(eventId);
+            handleClose();
         })
         .catch((error) => {
             vehicleDetailsDispatch({ 
@@ -85,7 +115,6 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                 payload: error
             });
         });
-        handleClose();
     };
 
     const uploadImages = async (eventId) => {
@@ -101,14 +130,44 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                 },
                 body: formData,
             })
-            .then(response => response.json());
+            .then(response => response.json())
+            .then(imagePostData => {
+                switch (imagePostData.result) {
+                    case 200:
+                        vehicleDetailsDispatch({ 
+                            type: "POST_EVENT_IMAGE_SUCCESS", 
+                            payload: imagePostData.data
+                        });
+                        break;
+                    case 404:
+                        vehicleDetailsDispatch({ 
+                            type: "POST_EVENT_IMAGE_FAILURE", 
+                            payload: "Image not found"
+                        });
+                        break;
+                    case 422:
+                        vehicleDetailsDispatch({ 
+                            type: "POST_EVENT_IMAGE_FAILURE", 
+                            payload: "data validation error"
+                        });
+                        break;
+                    default:
+                        vehicleDetailsDispatch({ 
+                            type: "POST_EVENT_IMAGE_FAILURE", 
+                            payload: "Unknown error"
+                        });
+                        break;
+                }
+            });
         });
     
         try {
-            const results = await Promise.all(promises);
-            console.log("Image upload results:", results);
+            await Promise.all(promises);
         } catch (error) {
-            console.error("Error uploading images:", error);
+            vehicleDetailsDispatch({ 
+                type: "ADD_EVENT_FAILURE", 
+                payload: error
+            });
         }
     };
 
@@ -141,10 +200,16 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                 display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' }, // Stack elements vertically on small screens, horizontally on larger screens
                 alignItems: 'stretch',
-                overflow: 'auto' // Allow modal to be scrollable if content exceeds height
+                overflow: 'auto' 
             }}>
-                <Box sx={{ flex: 1, position: 'relative'}}>
-                    <Button onClick={triggerFileInputClick} sx={{ marginBottom: 2 }}>Select Images</Button>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    flex: 1,
+                    position: 'relative',
+                }}>
                     <input
                         type="file"
                         multiple
@@ -153,25 +218,39 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                         onChange={handleImageChange}
                         accept="image/*"
                     />
-                    {images.length > 0 && (
-                        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
-                            {images.map((image) => (
-                                <ImageListItem key={image.id}>
-                                    <img
-                                        src={image.url} // Use the object URL stored in the images state
-                                        alt={`image-${image.id}`}
-                                        loading="lazy"
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
-                    )}
+                    <Box sx={{
+                        backgroundColor: theme.palette.grey[300],
+                        borderRadius: "5px"
+                    }}
+                    >
+                        {images.length > 0 && (
+                            <ImageList sx={{ padding: 2, maxWidth: 450, maxHeight: 355 }} cols={3} rowHeight={140}>
+                                {images.map((image) => (
+                                    <ImageListItem key={image.id}>
+                                        <img
+                                            src={image.url} // Use the object URL stored in the images state
+                                            alt={`image-${image.id}`}
+                                            loading="lazy"
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        )}
+                    </Box>
+                    <Button 
+                        onClick={triggerFileInputClick} 
+                        sx={{ margin: 3, width: 200}}
+                        variant="outlined"
+                    >
+                        Add Images
+                    </Button>
                 </Box>
+
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
                     <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
-                        Create Event (STILL IN DEVELOPMENT)
+                        Create Event
                     </Typography>
-                    <form onSubmit={handleCreateEvent} noValidate>
+                    <form onSubmit={handleCreateEvent}>
                         <Grid container spacing={1}>
                             <Grid item xs={12} sm={8}>
                                 <TextField
@@ -180,6 +259,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4}>
@@ -190,6 +270,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                     value={selectedType}
                                     onChange={handleEventTypeChange}
                                 >
@@ -207,6 +288,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -226,6 +308,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                                     variant="outlined"
                                     margin="normal"
                                     fullWidth
+                                    required
                                     multiline
                                     rows={5}
                                 />
@@ -240,7 +323,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                         >
                             Create
                         </Button>
-                        {authState.error && <Alert severity="error">{authState.error}</Alert>}
+                        {error && <Alert severity="error">{error}</Alert>}
                     </form>
                 </Box>
                 <input

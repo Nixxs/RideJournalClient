@@ -64,13 +64,16 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
                         variant="outlined"
                         margin="normal"
                         fullWidth
+                        required
                     />
                     <TextField
                         id="password"
                         label="Password"
+                        type="password"
                         variant="outlined"
                         margin="normal"
                         fullWidth
+                        required
                     />
                     <Button
                         sx={{ mt: 2, mb: 2}}

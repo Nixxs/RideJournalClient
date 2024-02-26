@@ -151,36 +151,36 @@ function EventCard({ eventId }) {
             </Typography>
           </Box>
         </CardContent>
-        {state.eventDetails.Images.length > 0 && 
-        <ImageList
-          sx={{
-            width: "100%",
-            height: "100%",
-            margin: 0,
-          }}
-          rowHeight={450}
-          cols={1}
-        >
-          <ImageListItem key={state.eventDetails.Images[currentIndex].id}>
-            <img
-              src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
-                state.eventDetails.Images[currentIndex].image
-              }?w=500&h=450&fit=crop&auto=format`}
-              srcSet={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
-                state.eventDetails.Images[currentIndex].image
-              }?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
-              alt={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex].id}`}
-              loading="lazy"
-              className="fade-in"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            />
-          </ImageListItem>
-        </ImageList>
-        }
+        {state.eventDetails?.Images.length > 0 && (
+          <ImageList
+            sx={{
+              width: "100%",
+              height: "100%",
+              margin: 0,
+            }}
+            rowHeight={450}
+            cols={1}
+          >
+            <ImageListItem key={state.eventDetails.Images[currentIndex]?.id}>
+              <img
+                src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                  state.eventDetails.Images[currentIndex]?.image
+                }?w=500&h=450&fit=crop&auto=format`}
+                srcSet={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                  state.eventDetails.Images[currentIndex]?.image
+                }?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
+                alt={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex]?.id}`}
+                loading="lazy"
+                className="fade-in"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </ImageListItem>
+          </ImageList>
+        )}
         {state.eventDetails.Images.length > 1 && (
           <>
             <IconButton
