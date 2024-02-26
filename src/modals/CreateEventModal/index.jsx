@@ -28,9 +28,10 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
     };
 
     useEffect(() => {
-        // Reset images when the modal is opened or closed
+        // Reset images and errors when the modal is opened or closed
         if (!open) {
             setImages([]);
+            setError(null);
         }
 
         // if there is an error in the vehicleDetailsState, set the errors state
@@ -55,7 +56,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
 
         const jsonData = {
             userId: authState.user.id,
-            vehicleId: 3,
+            vehicleId: vehicleDetailsState.vehicleDetails.id,
             title: title,
             type: type,
             date: date,
@@ -77,6 +78,8 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         .then(eventData => {
             switch (eventData.result) {
                 case 200:
+                    console.log("create event success")
+                    console.log(eventData.data);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_SUCCESS", 
                         payload: eventData.data
@@ -134,6 +137,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             .then(imagePostData => {
                 switch (imagePostData.result) {
                     case 200:
+                        console.log("create image success");
                         vehicleDetailsDispatch({ 
                             type: "POST_EVENT_IMAGE_SUCCESS", 
                             payload: imagePostData.data
