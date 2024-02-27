@@ -64,7 +64,6 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             detail: detail,
             published: true,
         };
-        console.log(jsonData);
 
         await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events`, {
             method: "POST",

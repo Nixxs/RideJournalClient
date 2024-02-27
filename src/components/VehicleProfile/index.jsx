@@ -51,7 +51,7 @@ function VehicleProfile({ vehicleData, openUpdateVehicleProfileModal }) {
                     }}
                     size="small"
                 >
-                    Edit Profile
+                    Edit Vehicle
                 </Button>
             }
         </Box>

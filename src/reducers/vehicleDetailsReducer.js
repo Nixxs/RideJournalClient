@@ -29,6 +29,16 @@ export const vehicleDetailsReducer = (state, action) => {
                 ...state,
                 error: action.payload
             }
+        case "DELETE_VEHICLE_SUCCESS":
+            return {
+                ...state,
+                vehicleDetails: null
+            }
+        case "DELETE_VEHICLE_FAILURE":
+            return {
+                ...state,
+                error: action.payload
+            }
         case "ADD_EVENT_SUCCESS":
             return {
                 ...state,
