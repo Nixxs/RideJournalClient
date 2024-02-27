@@ -90,7 +90,6 @@ function Navigation() {
     if (authState.isAuthenticated) {
       const authActions = [
         { name: 'My Vehicles', path: `/myvehicles/${authState.user.id}` , icon: <DirectionsCarFilledRoundedIcon />},
-        { name: 'Post Event', path: '/newevent', icon: <AutoStoriesIcon />} 
       ];
       setActions(authActions);
     } else {

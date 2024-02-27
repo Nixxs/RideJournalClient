@@ -3,7 +3,6 @@ import { layoutContext } from "../../layouts";
 import GridItem from "../../components/GridItem";
 import VehicleManager from "../../features/VehicleManager";
 import { initialState, vehicleReducer } from "../../reducers/vehicleReducer";
-import VehicleFilter from "../../features/VehicleFilter";
 
 export const VehiclesContext = createContext();
 
@@ -18,7 +17,6 @@ function Vehicles() {
     return (
         <GridItem>
             <VehiclesContext.Provider value={{ state, dispatch }}>
-                <VehicleFilter />
                 <VehicleManager />
             </VehiclesContext.Provider>
         </GridItem>
