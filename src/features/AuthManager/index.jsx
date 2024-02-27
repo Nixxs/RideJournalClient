@@ -20,8 +20,8 @@ const login = async (dispatch, email, password) => {
             setItem('authState', JSON.stringify(data.data));
             return("success");
         } else {
-            dispatch({ type: "LOGIN_FAILURE", payload: data.errors });
-            return(data.errors);
+            dispatch({ type: "LOGIN_FAILURE", payload: data });
+            return(data.errors[0].msg);
         }
     } catch (error) {
         dispatch({ type: "LOGIN_FAILURE", payload: `something went wrong: ${error}` });

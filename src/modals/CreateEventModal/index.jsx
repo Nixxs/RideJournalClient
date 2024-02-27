@@ -13,7 +13,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 
-const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, vehicleDetailsState }) => {
+const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, vehicleDetailsState, updateSelectedEventId }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [images, setImages] = useState([]);
@@ -78,26 +78,22 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         .then(eventData => {
             switch (eventData.result) {
                 case 200:
-                    console.log("create event success")
-                    console.log(eventData.data);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_SUCCESS", 
                         payload: eventData.data
                     });
-                    handleRefreshData();
-        
                     return eventData.data.id;
                 case 404:
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_FAILURE", 
-                        payload: "Event not found"
+                        payload: eventData.errors[0].msg
                     });
                     break;
                 case 422:
                     console.log(eventData.errors);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_FAILURE", 
-                        payload: "data validation error"
+                        payload: eventData.errors[0].msg
                     });
                     break;
                 default:
@@ -110,6 +106,8 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         })
         .then(eventId =>{
             uploadImages(eventId);
+            updateSelectedEventId(eventId);
+            handleRefreshData();
             handleClose();
         })
         .catch((error) => {
@@ -146,19 +144,19 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                     case 404:
                         vehicleDetailsDispatch({ 
                             type: "POST_EVENT_IMAGE_FAILURE", 
-                            payload: "Image not found"
+                            payload: imagePostData.errors[0].msg
                         });
                         break;
                     case 422:
                         vehicleDetailsDispatch({ 
                             type: "POST_EVENT_IMAGE_FAILURE", 
-                            payload: "data validation error"
+                            payload: imagePostData.errors[0].msg
                         });
                         break;
                     default:
                         vehicleDetailsDispatch({ 
                             type: "POST_EVENT_IMAGE_FAILURE", 
-                            payload: "Unknown error"
+                            payload: imagePostData.errors[0].msg
                         });
                         break;
                 }
@@ -318,6 +316,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                                 />
                             </Grid>
                         </Grid>
+                        {error && <Alert severity="error">{error}</Alert>}
                         <Button
                             sx={{ mt: 2 }}
                             type="submit"
@@ -327,7 +326,6 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                         >
                             Create
                         </Button>
-                        {error && <Alert severity="error">{error}</Alert>}
                     </form>
                 </Box>
                 <input

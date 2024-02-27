@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import Grid from '@mui/material/Grid';
 
-const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRefreshData }) => {
+const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehiclesState, handleRefreshData }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [imagePreview, setImagePreview] = useState(null);
@@ -21,7 +21,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
         if (authState.isAuthenticated && authState.user.image) {
             setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/default.png`);
         }
-    }, [authState]);
+    }, [authState, userVehiclesState.error]);
 
     const handleVehicleProfileUpdate = async (event) => {
         event.preventDefault();
@@ -44,7 +44,6 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
         formData.append("model", model);
         formData.append("profile", profile);
         if (image) {
-            console.log(image)
             formData.append("image", image); // Only append if an image is selected
         }
 
@@ -57,22 +56,41 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
             body: formData
         })
         .then(response => response.json())
-        .then(data => {
-            userVehiclesDispatch({ 
-                type: "ADD_VEHICLE_SUCCESS", 
-                payload: data
-            });
-            handleRefreshData();
-            handleClose();
+        .then(vehicleData => {
+            switch (vehicleData.result) {
+                case 200:
+                    userVehiclesDispatch({ 
+                        type: "ADD_VEHICLE_SUCCESS", 
+                        payload: vehicleData.data
+                    });
+                    handleRefreshData();
+                    handleClose();
+                    break;
+                case 404:
+                    userVehiclesDispatch({ 
+                        type: "ADD_VEHICLE_FAILURE", 
+                        payload: vehicleData.errors[0].msg
+                    });
+                    break;
+                case 422:
+                    userVehiclesDispatch({ 
+                        type: "ADD_VEHICLE_FAILURE", 
+                        payload: vehicleData.errors[0].msg
+                    });
+                    break;
+                default:
+                    userVehiclesDispatch({ 
+                        type: "ADD_VEHICLE_FAILURE", 
+                        payload: vehicleData.errors[0].msg
+                    });
+            }
         })
         .catch((error) => {
             userVehiclesDispatch({ 
                 type: "ADD_VEHICLE_FAILURE", 
-                payload: error[0].msg
+                payload: error.message
             });
         });
-    
-        handleClose();
     };
 
     const handleImageChange = (event) => {
@@ -202,8 +220,9 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                                 />
                             </Grid>
                         </Grid>
+                        {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
                         <Button
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 1 }}
                             type="submit"
                             variant="contained"
                             color="primary"
@@ -211,7 +230,6 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, handleRef
                         >
                             Create
                         </Button>
-                        {authState.error && <Alert severity="error">{authState.error}</Alert>}
                     </form>
                 </Box>
                 <input

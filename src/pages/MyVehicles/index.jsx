@@ -198,6 +198,7 @@ function MyVehicles() {
             open={updateProfileModalOpen} 
             handleClose={handleCloseUpdateProfileModal}
             userVehiclesDispatch={dispatch}
+            userVehiclesState={state}
           />
 
           <CreateVehicleModal 
@@ -205,6 +206,7 @@ function MyVehicles() {
             handleClose={handleCloseAddVehicleModal}
             userVehiclesDispatch={dispatch} 
             handleRefreshData={handleRefreshData}
+            userVehiclesState={state}
           />
       </>
     );

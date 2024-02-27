@@ -26,16 +26,16 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
-            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${existingVehicleData.image}`);
-            setName(existingVehicleData.name);
-            setLocation(existingVehicleData.location);
-            setYear(existingVehicleData.year);
-            setMake(existingVehicleData.make);
-            setModel(existingVehicleData.model);
-            setProfile(existingVehicleData.profile);
-            setvehicleId(existingVehicleData.id);
+            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${existingVehicleData.vehicleDetails.image}`);
+            setName(existingVehicleData.vehicleDetails.name);
+            setLocation(existingVehicleData.vehicleDetails.location);
+            setYear(existingVehicleData.vehicleDetails.year);
+            setMake(existingVehicleData.vehicleDetails.make);
+            setModel(existingVehicleData.vehicleDetails.model);
+            setProfile(existingVehicleData.vehicleDetails.profile);
+            setvehicleId(existingVehicleData.vehicleDetails.id);
         }
-    }, [authState]);
+    }, [authState, existingVehicleData.error]);
 
     const onNameChange = (event) => {
         setName(event.target.value)
@@ -88,19 +88,28 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
         await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`, {
             method: "PUT",
             headers: {
-                // "Content-Type": "multipart/form-data" is not required here; the browser will automatically set it along with the correct boundary
                 "authorization": `${authState.token}` 
             },
             body: formData
         })
         .then(response => response.json())
         .then(data => {
-            vehicleDetailsDispatch({ 
-                type: "UPDATE_VEHICLE_DETAIL_SUCCESS", 
-                payload: data
-            });
-            handleRefreshData();
-            handleClose();
+            switch (data.result) {
+                case 200:
+                    vehicleDetailsDispatch({ 
+                        type: "UPDATE_VEHICLE_DETAIL_SUCCESS", 
+                        payload: data
+                    });
+                    handleRefreshData();
+                    handleClose();
+                    break;
+                default:
+                    vehicleDetailsDispatch({ 
+                        type: "UPDATE_VEHICLE_DETAIL_FAILURE", 
+                        payload: data.errors[0].msg
+                    });
+                    break;
+            }
         })
         .catch((error) => {
             vehicleDetailsDispatch({ 
@@ -246,6 +255,7 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
                                 />
                             </Grid>
                         </Grid>
+                        {existingVehicleData.error && <Alert severity="error">{existingVehicleData.error}</Alert>}
                         <Button
                             sx={{ mt: 2 }}
                             type="submit"
@@ -255,7 +265,6 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
                         >
                             Update
                         </Button>
-                        {authState.error && <Alert severity="error">{authState.error}</Alert>}
                     </form>
                 </Box>
                 <input

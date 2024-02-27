@@ -35,7 +35,8 @@ export const myVehiclesReducer = (state, action) => {
                 userVehicles: {
                     ...state.userVehicles,
                     vehicles: [...state.userVehicles.Vehicles, action.payload]
-                }
+                },
+                error: null
             }
         case "ADD_VEHICLE_FAILURE":
             return {

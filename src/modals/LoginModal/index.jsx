@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import { useAuth } from '../../features/AuthManager';
 import { login } from '../../features/AuthManager';
 import Alert from '@mui/material/Alert';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const modalStyle = {
   position: 'absolute',
@@ -24,8 +24,13 @@ const modalStyle = {
 };
 
 const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
-    const { authState: {error}, dispatch } = useAuth(); 
+    const { authState, dispatch } = useAuth(); 
     const [createAccountOpen, setCreateAccountOpen] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setError(null);
+    },[open]);
 
     const handleLogin = (event) => {
         event.preventDefault();
@@ -36,7 +41,9 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
         login(dispatch, email, password).then((response) => {
             if (response === "success") {
                 handleClose();
-            } 
+            } else {
+                setError(response);
+            }   
         });
     }
 
@@ -75,6 +82,7 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
                         fullWidth
                         required
                     />
+                    {error && <Alert severity="error">{error}</Alert>}
                     <Button
                         sx={{ mt: 2, mb: 2}}
                         type="submit"
@@ -82,7 +90,7 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
                         color="primary"
                         fullWidth
                     >Login</Button>
-                    {error && <Alert severity="error">{error}</Alert>}
+                    
                 </form>
                 <Divider />
                 <Button

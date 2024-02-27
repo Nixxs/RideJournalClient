@@ -8,6 +8,7 @@ export const vehicleReducer = (state, action) => {
         case 'GET_VEHICLES_SUCCESS':
             return {
                 ...state,
+                error: null,
                 vehicles: action.payload,
             }
         case "GET_VEHICLES_FAILURE":

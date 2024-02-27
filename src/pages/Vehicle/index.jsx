@@ -127,7 +127,7 @@ function Vehicle() {
                   handleClose={handleCloseUpdateVehicleModal}
                   vehicleDetailsDispatch={vehicleDetailsDispatch} 
                   handleRefreshData={handleRefreshData}
-                  existingVehicleData={vehicleDetailsState.vehicleDetails}
+                  existingVehicleData={vehicleDetailsState}
                 />
 
                 <CreateEventModal 
@@ -136,6 +136,7 @@ function Vehicle() {
                   vehicleDetailsDispatch={vehicleDetailsDispatch} 
                   handleRefreshData={handleRefreshData}
                   vehicleDetailsState={vehicleDetailsState}
+                  updateSelectedEventId={updateSelectedEventId}
                 />
              </>
             )}

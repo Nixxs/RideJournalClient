@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import { layoutContext } from "../../layouts";
 
-const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
+const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehiclesState }) => {
     const theme = useTheme();
     const { setPageTitle } = useContext(layoutContext);
     const { authState, dispatch } = useAuth(); 
@@ -26,7 +26,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
             setUsername(authState.user.name);
             setProfile(authState.user.profile);
         }
-    }, [authState]);
+    }, [authState, userVehiclesState.error]);
 
     const onUsernameChange = (event) => {
         setUsername(event.target.value)
@@ -53,25 +53,33 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
         await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/users/${authState.user.id}`, {
             method: "PUT",
             headers: {
-                // "Content-Type": "multipart/form-data" is not required here; the browser will automatically set it along with the correct boundary
                 "authorization": `${authState.token}` // our backend doesn't use bearer token it just takes the token
             },
             body: formData
         })
         .then(response => response.json())
         .then(data => {
-            userVehiclesDispatch({ 
-                type: "UPDATE_USER_PROFILE_SUCCESS", 
-                payload: {name: username, profile: profile, image: data.data.image} // Assuming 'data.image' is how your backend returns the path of the uploaded image
-            });
+            switch (data.result) {
+                case 200:
+                    userVehiclesDispatch({ 
+                        type: "UPDATE_USER_PROFILE_SUCCESS", 
+                        payload: {name: username, profile: profile, image: data.data.image}
+                    });
+        
+                    dispatch({
+                        type: "UPDATE_USER_PROFILE_SUCCESS",
+                        payload: {name: username, profile: profile, image: data.data.image}
+                    });
 
-            dispatch({
-                type: "UPDATE_USER_PROFILE_SUCCESS",
-                payload: {name: username, profile: profile, image: data.data.image}
-            });
-
-            setPageTitle(username);
-            handleClose();
+                    setPageTitle(username);
+                    handleClose();
+                default:
+                    userVehiclesDispatch({ 
+                        type: "UPDATE_USER_PROFILE_FAILURE", 
+                        payload: data.errors[0].msg
+                    });
+                    break;
+            }
         })
         .catch((error) => {
             userVehiclesDispatch({ 
@@ -165,8 +173,9 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                             multiline
                             rows={7}
                         />
+                        {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
                         <Button
-                            sx={{ mt: 2}}
+                            sx={{ mt: 1}}
                             type="submit"
                             variant="contained"
                             color="primary"
@@ -174,7 +183,6 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch }) => {
                         >
                             Update
                         </Button>
-                        {authState.error && <Alert severity="error">{authState.error}</Alert>}
                     </form>
                 </Box>
                 <input
