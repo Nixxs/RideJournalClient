@@ -173,12 +173,16 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
     };
 
     const handleImageChange = (event) => {
-        const newImage = event.target.files[0];
-        if (newImage) {
-            const newImageUrl = URL.createObjectURL(newImage);
-            setImages((prevImages) => [...prevImages, { id: Date.now(), url: newImageUrl, file: newImage}]);
-        }
+        const files = event.target.files;
+        const newImages = Array.from(files).map(file => ({
+            id: Date.now() + Math.random(), // Ensuring unique ID for each file
+            url: URL.createObjectURL(file),
+            file: file
+        }));
+    
+        setImages((prevImages) => [...prevImages, ...newImages]);
     };
+    
 
     const triggerFileInputClick = () => {
         fileInputRef.current.click();
@@ -329,6 +333,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                 </Box>
                 <input
                     type="file"
+                    multiple
                     name="image"
                     accept="image/*"
                     style={{ display: 'none' }}
