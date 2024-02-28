@@ -73,7 +73,7 @@ function Vehicle() {
         .catch((error) =>{
           vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: error.message });
         });
-    }, [id, refreshData, selectedEventId]);
+    }, [id, refreshData]);
     
     return (
       <>
