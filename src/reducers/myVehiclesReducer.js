@@ -22,7 +22,8 @@ export const myVehiclesReducer = (state, action) => {
                 userVehicles: {
                     ...state.userVehicles,
                     ...action.payload
-                }
+                },
+                error: null
             }
         case "UPDATE_USER_PROFILE_FAILURE":
             return {

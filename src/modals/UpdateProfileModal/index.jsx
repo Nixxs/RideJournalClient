@@ -92,8 +92,6 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
                 payload: error.message 
             });
         });
-    
-        handleClose();
     };
 
     const handleImageChange = (event) => {

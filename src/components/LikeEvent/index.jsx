@@ -41,6 +41,7 @@ function LikeEvent({ eventId, likeData }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "authorization": `${authState.token}`
       },
       body: JSON.stringify({
         eventId: parseInt(event.currentTarget.dataset.eventid),
@@ -74,6 +75,9 @@ function LikeEvent({ eventId, likeData }) {
 
     fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/likes/${state.likedStatus.likeId}`, {
       method: "DELETE",
+      headers: {
+        "authorization": `${authState.token}`
+      },
     })
       .then((response) => response.json())
       .then((deleteLike) => {

@@ -39,7 +39,6 @@ const UpdateVehicleModal = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authState.isAuthenticated && authState.user.image) {
       setImagePreview(
         `${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
           vehicleDetailsState.vehicleDetails.image
@@ -52,7 +51,6 @@ const UpdateVehicleModal = ({
       setModel(vehicleDetailsState.vehicleDetails.model);
       setProfile(vehicleDetailsState.vehicleDetails.profile);
       setvehicleId(vehicleDetailsState.vehicleDetails.id);
-    }
   }, [authState, vehicleDetailsState.error]);
 
   const handleOpenDeleteDialog = () => {
@@ -69,7 +67,7 @@ const UpdateVehicleModal = ({
       {
         method: "DELETE",
         headers: {
-          authorization: `${authState.token}`,
+            "authorization": `${authState.token}`,
         },
       }
     )
@@ -155,7 +153,7 @@ const UpdateVehicleModal = ({
       {
         method: "PUT",
         headers: {
-          authorization: `${authState.token}`,
+            "authorization": `${authState.token}`,
         },
         body: formData,
       }

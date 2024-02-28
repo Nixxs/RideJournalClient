@@ -22,7 +22,8 @@ export const vehicleDetailsReducer = (state, action) => {
                 vehicleDetails: {
                     ...state.vehicleDetails,
                     ...action.payload
-                }
+                },
+                error: null
             }
         case "UPDATE_VEHICLE_DETAIL_FAILURE":
             return {
@@ -32,7 +33,8 @@ export const vehicleDetailsReducer = (state, action) => {
         case "DELETE_VEHICLE_SUCCESS":
             return {
                 ...state,
-                vehicleDetails: null
+                vehicleDetails: null,
+                error: null
             }
         case "DELETE_VEHICLE_FAILURE":
             return {
@@ -48,7 +50,8 @@ export const vehicleDetailsReducer = (state, action) => {
                         ...state.vehicleDetails.Events,
                         action.payload
                     ]
-                }
+                },
+                error: null
             }
         case "ADD_EVENT_FAILURE":
             return {

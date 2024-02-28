@@ -62,7 +62,7 @@ const UpdateVehicleModal = ({
       {
         method: "DELETE",
         headers: {
-          authorization: `${authState.token}`,
+            "authorization": `${authState.token}`,
         },
       }
     )
@@ -128,7 +128,7 @@ const UpdateVehicleModal = ({
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          authorization: `${authState.token}`,
+          "authorization": `${authState.token}`,
         },
         body: JSON.stringify({
           title: title,

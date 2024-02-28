@@ -69,7 +69,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             method: "POST",
             headers: {
                 "Content-Type": "application/json", // Specify the content type as JSON
-                "Authorization": `${authState.token}`, // Ensure proper capitalization of header names
+                "authorization": `${authState.token}`, // Ensure proper capitalization of header names
             },
             body: JSON.stringify(jsonData)
         })
