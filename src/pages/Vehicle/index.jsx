@@ -52,7 +52,7 @@ function Vehicle() {
           switch (vehicleData.result) {
             case 200:
               vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_SUCCESS", payload: vehicleData.data });
-              setPageTitle(`Vehicle Timeline - ${vehicleData.data.name}`); // !!!this is cuausing a double render!!!
+              setPageTitle(`Vehicle Timeline - ${vehicleData.data.name}`);
               if (vehicleData.data.Events.length > 0 && selectedEventId === 1){
                 const sortedEvents = vehicleData.data.Events.sort((a, b) => new Date(b.date) - new Date(a.date));
                 const latestEvent = sortedEvents[0].id

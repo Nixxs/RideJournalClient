@@ -55,8 +55,6 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
     };
 
     const handleConfirmDelete = async () => {
-        console.log(`delete vehicle: ${vehicleId}`);
-        // perform delete operation
         await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`, {
             method: "DELETE",
             headers: {
@@ -67,7 +65,6 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
         .then(data => {
             switch (data.result) {
                 case 200:
-
                     vehicleDetailsDispatch({ 
                         type: "DELETE_VEHICLE_SUCCESS", 
                         payload: data.data
