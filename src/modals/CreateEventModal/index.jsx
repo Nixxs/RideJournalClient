@@ -104,10 +104,11 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             }
         })
         .then(eventId =>{
-            uploadImages(eventId);
-            updateSelectedEventId(eventId);
-            handleRefreshData();
-            handleClose();
+            uploadImages(eventId).then(() => {
+                handleRefreshData();
+                updateSelectedEventId(eventId);
+                handleClose();
+            })
         })
         .catch((error) => {
             vehicleDetailsDispatch({ 
@@ -134,7 +135,6 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
             .then(imagePostData => {
                 switch (imagePostData.result) {
                     case 200:
-                        console.log("create image success");
                         vehicleDetailsDispatch({ 
                             type: "POST_EVENT_IMAGE_SUCCESS", 
                             payload: imagePostData.data
@@ -183,7 +183,6 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         setImages((prevImages) => [...prevImages, ...newImages]);
     };
     
-
     const triggerFileInputClick = () => {
         fileInputRef.current.click();
     };

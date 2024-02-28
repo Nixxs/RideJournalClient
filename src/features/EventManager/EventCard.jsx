@@ -44,6 +44,7 @@ function EventCard({ eventId }) {
               type: "GET_EVENT_DETAIL_SUCCESS",
               payload: eventData.data,
             });
+            setCurrentIndex(0);
             break;
           case 404:
             dispatch({
@@ -181,14 +182,14 @@ function EventCard({ eventId }) {
             </ImageListItem>
           </ImageList>
         )}
-        {state.eventDetails.Images.length > 1 && (
+        {state.eventDetails?.Images.length > 1 && (
           <>
             <IconButton
               sx={{
                 position: "absolute",
-                top: "50%",
+                top: "55%",
                 left: 0,
-                transform: "translateY(-50%)",
+                transform: "translateY(-30%)",
                 color: "white",
                 bgcolor: "rgba(0, 0, 0, 0.5)",
                 "&:hover": {
@@ -202,9 +203,9 @@ function EventCard({ eventId }) {
             <IconButton
               sx={{
                 position: "absolute",
-                top: "50%",
+                top: "55%",
                 right: 0,
-                transform: "translateY(-50%)",
+                transform: "translateY(-30%)",
                 color: "white",
                 bgcolor: "rgba(0, 0, 0, 0.5)",
                 "&:hover": {

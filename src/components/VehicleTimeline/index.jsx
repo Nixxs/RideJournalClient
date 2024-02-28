@@ -11,21 +11,11 @@ import { ButtonBase } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useAuth } from "../../features/AuthManager";
 
-function VehicleTimeline({ vehicleDetails, updateEventCard, openCreateEventModal }) {
-  const [selectedEventId, setSelectedEventId] = useState(null);
+function VehicleTimeline({ vehicleDetails, updateEventCard, openCreateEventModal, selectedEventId,  updateSelectedEventId}) {
   const { authState } = useAuth();
 
-  useEffect(() => {
-    if (vehicleDetails.Events.length > 0) {
-      const sortedEvents = vehicleDetails.Events.sort((a, b) => new Date(b.date) - new Date(a.date));
-      const latestEvent = sortedEvents[0].id;
-      setSelectedEventId(latestEvent);
-      updateEventCard(latestEvent);
-    }
-  }, [vehicleDetails.Events]);
-
   const handleTimelineItemClick = (eventId) => {
-    setSelectedEventId(eventId);
+    updateSelectedEventId(eventId);
     updateEventCard(eventId);
   };
 

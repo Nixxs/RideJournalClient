@@ -89,6 +89,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                         margin="normal"
                         required
                         fullWidth
+                        autoComplete="username"
                     />
                     <TextField
                         id="email"
@@ -97,6 +98,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                         margin="normal"
                         required
                         fullWidth
+                        autoComplete="email" 
                     />
                     <TextField
                         id="password"
@@ -106,6 +108,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                         margin="normal"
                         required
                         fullWidth
+                        autoComplete="new-password"
                     />
                     <TextField
                         id="confirm-password"
@@ -115,6 +118,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                         margin="normal"
                         required
                         fullWidth
+                        autoComplete="new-password"
                     />
                     {state.error && <Alert severity="error">{state.error}</Alert>}
                     <Button sx={{marginTop: 2}} type="submit" variant="contained">Create Account</Button>

@@ -72,6 +72,7 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
                         margin="normal"
                         fullWidth
                         required
+                        autoComplete="email"
                     />
                     <TextField
                         id="password"
@@ -81,6 +82,7 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
                         margin="normal"
                         fullWidth
                         required
+                        autoComplete="current-password" 
                     />
                     {error && <Alert severity="error">{error}</Alert>}
                     <Button

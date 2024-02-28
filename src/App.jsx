@@ -5,7 +5,6 @@ import Vehicles from "./pages/Vehicles";
 import Events from "./pages/Events";
 import About from "./pages/About";
 import MyVehicles from "./pages/MyVehicles";
-import NewEvent from "./pages/NewEvent";
 import Vehicle from "./pages/Vehicle";
 
 const router = createBrowserRouter([

@@ -17,7 +17,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate}  from 'react-router-dom';
 
-const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, existingVehicleData }) => {
+const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, vehicleDetailsState }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [imagePreview, setImagePreview] = useState(null);
@@ -34,16 +34,16 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
-            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${existingVehicleData.vehicleDetails.image}`);
-            setName(existingVehicleData.vehicleDetails.name);
-            setLocation(existingVehicleData.vehicleDetails.location);
-            setYear(existingVehicleData.vehicleDetails.year);
-            setMake(existingVehicleData.vehicleDetails.make);
-            setModel(existingVehicleData.vehicleDetails.model);
-            setProfile(existingVehicleData.vehicleDetails.profile);
-            setvehicleId(existingVehicleData.vehicleDetails.id);
+            setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${vehicleDetailsState.vehicleDetails.image}`);
+            setName(vehicleDetailsState.vehicleDetails.name);
+            setLocation(vehicleDetailsState.vehicleDetails.location);
+            setYear(vehicleDetailsState.vehicleDetails.year);
+            setMake(vehicleDetailsState.vehicleDetails.make);
+            setModel(vehicleDetailsState.vehicleDetails.model);
+            setProfile(vehicleDetailsState.vehicleDetails.profile);
+            setvehicleId(vehicleDetailsState.vehicleDetails.id);
         }
-    }, [authState, existingVehicleData.error]);
+    }, [authState, vehicleDetailsState.error]);
 
 
     const handleOpenDeleteDialog = () => {
@@ -57,13 +57,41 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
     const handleConfirmDelete = async () => {
         console.log(`delete vehicle: ${vehicleId}`);
         // perform delete operation
-        // close the modal window
-        // navigate to user's myvehicles page
-        handleCloseDeleteDialog();
-        handleClose();
-        navigate(`/myvehicles/${authState.user.id}`);
+        await fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`, {
+            method: "DELETE",
+            headers: {
+                "authorization": `${authState.token}` 
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            switch (data.result) {
+                case 200:
 
-        console.log("test");
+                    vehicleDetailsDispatch({ 
+                        type: "DELETE_VEHICLE_SUCCESS", 
+                        payload: data.data
+                    });
+
+                    handleCloseDeleteDialog();
+                    handleClose();
+                    navigate(`/myvehicles/${authState.user.id}`);
+                    break;
+                default:
+                    vehicleDetailsDispatch({ 
+                        type: "DELETE_VEHICLE_FAILURE", 
+                        payload: data.errors[0].msg
+                    });
+                    break;
+            }
+        })
+        .catch((error) => {
+            vehicleDetailsDispatch({ 
+                type: "DELETE_VEHICLE_FAILURE", 
+                payload: error.message
+            });
+        })
+
     };
 
     const onNameChange = (event) => {
@@ -217,7 +245,7 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
                                 Update Vehicle
                             </Typography>
                             {/* checking if the user is the owner of the vehicle */}
-                            {authState.isAuthenticated && authState.user.id === existingVehicleData.vehicleDetails.User.id &&
+                            {authState.isAuthenticated && authState.user.id === vehicleDetailsState.vehicleDetails.User.id &&
                                 <Button
                                     sx={{ mt: 0, mb: 2, flex: 0 }}
                                     onClick={handleOpenDeleteDialog}
@@ -304,7 +332,7 @@ const UpdateVehicleModal = ({ open, handleClose, vehicleDetailsDispatch, handleR
                                     />
                                 </Grid>
                             </Grid>
-                            {existingVehicleData.error && <Alert severity="error">{existingVehicleData.error}</Alert>}
+                            {vehicleDetailsState.error && <Alert severity="error">{vehicleDetailsState.error}</Alert>}
                             <Button
                                 sx={{ mt: 2 }}
                                 type="submit"

@@ -53,26 +53,27 @@ function Vehicle() {
             case 200:
               vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_SUCCESS", payload: vehicleData.data });
               setPageTitle(`Vehicle Timeline - ${vehicleData.data.name}`); // !!!this is cuausing a double render!!!
-              
-              if (vehicleData.data.Events.length > 0){
-                updateSelectedEventId(vehicleData.data.Events[0].id);
+              if (vehicleData.data.Events.length > 0 && selectedEventId === 1){
+                const sortedEvents = vehicleData.data.Events.sort((a, b) => new Date(b.date) - new Date(a.date));
+                const latestEvent = sortedEvents[0].id
+                updateSelectedEventId(latestEvent);
               }
               break;
             case 404:
-              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.message });
+              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.errors[0].msg });
               break;
             case 500:
-              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.message });
+              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.errors[0].msg });
               break;
             default:
-              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.message });
+              vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: vehicleData.errors[0].msg });
               break;
           }
         })
         .catch((error) =>{
           vehicleDetailsDispatch({ type: "GET_VEHICLE_DETAIL_FAILURE", payload: error.message });
         });
-    }, [id, refreshData]);
+    }, [id, refreshData, selectedEventId]);
     
     return (
       <>
@@ -105,6 +106,8 @@ function Vehicle() {
                       vehicleDetails={vehicleDetailsState.vehicleDetails}  
                       updateEventCard={updateSelectedEventId}
                       openCreateEventModal={handleOpenCreateEventModal}
+                      selectedEventId={selectedEventId}
+                      updateSelectedEventId={updateSelectedEventId}
                     />
                   </Box>
                   <Box sx={{
@@ -127,7 +130,7 @@ function Vehicle() {
                   handleClose={handleCloseUpdateVehicleModal}
                   vehicleDetailsDispatch={vehicleDetailsDispatch} 
                   handleRefreshData={handleRefreshData}
-                  existingVehicleData={vehicleDetailsState}
+                  vehicleDetailsState={vehicleDetailsState}
                 />
 
                 <CreateEventModal 

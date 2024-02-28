@@ -24,7 +24,12 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
         if (authState.isAuthenticated && authState.user.image) {
             setImagePreview(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${authState.user.image}`);
             setUsername(authState.user.name);
-            setProfile(authState.user.profile);
+
+            if (authState.user.profile) {
+                setProfile(authState.user.profile);
+            } else {
+                setProfile("");
+            }
         }
     }, [authState, userVehiclesState.error]);
 
