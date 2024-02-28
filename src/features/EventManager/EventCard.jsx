@@ -292,7 +292,8 @@ function EventCard({ eventId }) {
               </Button>
             </NavLink>
 
-            {authState.user.id === state.eventDetails.User.id && (
+            
+            {authState.isAuthenticated && (authState.user.id === state.eventDetails.User.id) && (
               <Button 
                 size="small" 
                 variant="outlined"
