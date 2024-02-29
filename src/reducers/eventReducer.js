@@ -8,13 +8,13 @@ export const eventReducer = (state, action) => {
         case 'GET_EVENTS_SUCCESS':
             return {
                 ...state,
-                events: action.payload,
+                events: [...state.events, ...action.payload],
+                error: null,
             }
         case "GET_EVENTS_FAILURE":
             console.log(action.payload);
             return {
                 ...state,
-                events: [],
                 error: action.payload,
             }
         default:

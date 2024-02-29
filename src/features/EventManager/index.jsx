@@ -1,58 +1,87 @@
 import { EventsContext } from "../../pages/Events";
-import { useContext, useEffect } from "react";
+import { useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import EventCard from "./EventCard";
+import InfiniteScroll from "react-infinite-scroller";
+import { debounce } from 'lodash';
 
 function EventManager() {
-    const { state, dispatch } = useContext(EventsContext);
+  const { state, dispatch } = useContext(EventsContext);
+  const [hasMoreItems, setHasMoreItems] = useState(true);
+  const [offset, setOffset] = useState(0);
 
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events`)
-          .then((response) => response.json())
-          .then((eventsData) => {
-            switch (eventsData.result) {
-              case 200:
-                dispatch({ type: "GET_EVENTS_SUCCESS", payload: eventsData.data });
-                break;
-              case 404:
-                dispatch({ type: "GET_EVENTS_FAILURE", payload: eventsData.message });
-                break;
-              case 500:
-                dispatch({ type: "GET_EVENTS_FAILURE", payload: eventsData.message });
-                break;
-              default:
-                dispatch({ type: "GET_EVENTS_FAILURE", payload: eventsData.message });
-                break;
+  const loadMoreEvents = () => {
+    const limit = 2;
+    fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events?limit=${limit}&offset=${offset}`)
+      .then((response) => response.json())
+      .then((eventsData) => {
+        switch (eventsData.result) {
+          case 200:
+            console.log("offset:", offset);
+            const newEvents = eventsData.data.filter(newEvent => 
+              !state.events.some(existingEvent => existingEvent.id === newEvent.id)
+            );
+            if (newEvents.length < limit) {
+              setHasMoreItems(false);
             }
-          })
-          .catch((error) =>
-            dispatch({ type: "GET_EVENTS_FAILURE", payload: error.message })
-          );
-    },[]);
+            dispatch({ type: "GET_EVENTS_SUCCESS", payload: newEvents });
+            setOffset((prevOffset) => prevOffset + limit);
+            break;
+          case 404:
+            setHasMoreItems(false);
+            dispatch({
+              type: "GET_EVENTS_FAILURE",
+              payload: eventsData.message,
+            });
+            break;
+          case 500:
+            setHasMoreItems(false);
+            dispatch({
+              type: "GET_EVENTS_FAILURE",
+              payload: eventsData.message,
+            });
+            break;
+          default:
+            setHasMoreItems(false);
+            dispatch({
+              type: "GET_EVENTS_FAILURE",
+              payload: eventsData.message,
+            });
+            break;
+        }
+      })
+      .catch((error) => {
+        setHasMoreItems(false);
+        dispatch({ type: "GET_EVENTS_FAILURE", payload: error.message });
+      });
+  };
 
-    const EventList = () => {
-      return (
-        state.events.map((event) => (
-          <Box 
-            key={event.id} 
+  const debouncedLoadMoreEvents = debounce(loadMoreEvents, 500);
+
+  return (
+    <Box sx={{ paddingBottom: 2, paddingRight: 2 }}>
+      {state.error && <Alert severity="error">{state.error}</Alert>}
+      <InfiniteScroll
+        pageStart={0}
+        loadMore={debouncedLoadMoreEvents}
+        hasMore={hasMoreItems}
+        loader={<div key={0}>Loading...</div>}
+      >
+        {state.events.map((event) => (
+          <Box
+            key={event.id}
             sx={{
               marginBottom: 2,
               maxWidth: "75vw",
             }}
           >
-            <EventCard eventId={event.id}/>
+            <EventCard eventId={event.id} />
           </Box>
-        ))
-      );
-    }
-
-    return (
-        <Box sx={{ paddingBottom: 2, paddingRight: 2}}>
-        {state.error && <Alert severity="error">{state.error}</Alert>}
-            <EventList />
-        </Box>
-    );
+        ))}
+      </InfiniteScroll>
+    </Box>
+  );
 }
 
-export default EventManager
+export default EventManager;
