@@ -18,7 +18,6 @@ function EventManager() {
       .then((eventsData) => {
         switch (eventsData.result) {
           case 200:
-            console.log("offset:", offset);
             const newEvents = eventsData.data.filter(newEvent => 
               !state.events.some(existingEvent => existingEvent.id === newEvent.id)
             );
@@ -32,21 +31,21 @@ function EventManager() {
             setHasMoreItems(false);
             dispatch({
               type: "GET_EVENTS_FAILURE",
-              payload: eventsData.message,
+              payload: eventsData.errors[0].msg,
             });
             break;
           case 500:
             setHasMoreItems(false);
             dispatch({
               type: "GET_EVENTS_FAILURE",
-              payload: eventsData.message,
+              payload: eventsData.errors[0].msg,
             });
             break;
           default:
             setHasMoreItems(false);
             dispatch({
               type: "GET_EVENTS_FAILURE",
-              payload: eventsData.message,
+              payload: eventsData.errors[0].msg,
             });
             break;
         }

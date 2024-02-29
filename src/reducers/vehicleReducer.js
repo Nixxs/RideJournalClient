@@ -9,7 +9,7 @@ export const vehicleReducer = (state, action) => {
             return {
                 ...state,
                 error: null,
-                vehicles: action.payload,
+                vehicles: [...state.vehicles, ...action.payload],
             }
         case "GET_VEHICLES_FAILURE":
             return {
