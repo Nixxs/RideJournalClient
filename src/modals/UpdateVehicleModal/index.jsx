@@ -61,9 +61,11 @@ const UpdateVehicleModal = ({
 
   const handleCloseDeleteDialog = () => {
     setopenDeleteDialog(false);
+    handleCloseDeleteDialog();
   };
 
   const handleConfirmDelete = async () => {
+    setIsLoading(true);
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`,
       {
@@ -77,16 +79,16 @@ const UpdateVehicleModal = ({
       .then((data) => {
         switch (data.result) {
           case 200:
+            setIsLoading(false);
             vehicleDetailsDispatch({
               type: "DELETE_VEHICLE_SUCCESS",
               payload: data.data,
             });
-
-            handleCloseDeleteDialog();
             handleClose();
             navigate(`/myvehicles/${authState.user.id}`);
             break;
           default:
+            setIsLoading(false);
             vehicleDetailsDispatch({
               type: "DELETE_VEHICLE_FAILURE",
               payload: data.errors[0].msg,
@@ -95,6 +97,7 @@ const UpdateVehicleModal = ({
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         vehicleDetailsDispatch({
           type: "DELETE_VEHICLE_FAILURE",
           payload: error.message,
