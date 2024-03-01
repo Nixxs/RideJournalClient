@@ -54,6 +54,7 @@ const UpdateEventModal = ({
   }
 
   const handleConfirmDelete = async () => {
+    setIsLoading(true);
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events/${eventState.eventDetails.id}`,
       {
@@ -67,6 +68,7 @@ const UpdateEventModal = ({
       .then((data) => {
         switch (data.result) {
           case 200:
+            setIsLoading(false);
             eventDispatch({
               type: "DELETE_EVENT_SUCCESS",
               payload: data.data,
@@ -77,6 +79,7 @@ const UpdateEventModal = ({
             handleRefresh();
             break;
           default:
+            setIsLoading(false);
             eventDispatch({
               type: "DELETE_EVENT_FAILURE",
               payload: data.errors[0].msg,
@@ -85,6 +88,7 @@ const UpdateEventModal = ({
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         eventDispatch({
           type: "DELETE_EVENT_FAILURE",
           payload: error.message,
@@ -157,6 +161,13 @@ const UpdateEventModal = ({
               break;
           }
         })
+        .catch((error) => {
+          setIsLoading(false);
+          eventDispatch({
+            type: "UPDATE_EVENT_DETAIL_FAILURE",
+            payload: error.message,
+          });
+        });
   };
 
   return (

@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import { layoutContext } from "../../layouts";
+import Loader from "../../components/Loader";
 
 const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehiclesState }) => {
     const theme = useTheme();
@@ -19,6 +20,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
     const [username, setUsername] = useState(null); 
     const [profile, setProfile] = useState(null);
     const fileInputRef = useRef(null); 
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
@@ -43,6 +45,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
 
     const handleUserProfileUpdate = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         const username = event.target.name.value;
         const profile = event.target.profile.value;
@@ -66,6 +69,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
         .then(data => {
             switch (data.result) {
                 case 200:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "UPDATE_USER_PROFILE_SUCCESS", 
                         payload: {name: username, profile: profile, image: data.data.image}
@@ -79,6 +83,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
                     setPageTitle(username);
                     handleClose();
                 default:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "UPDATE_USER_PROFILE_FAILURE", 
                         payload: data.errors[0].msg
@@ -87,6 +92,7 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
             }
         })
         .catch((error) => {
+            setIsLoading(false);
             userVehiclesDispatch({ 
                 type: "UPDATE_USER_PROFILE_FAILURE", 
                 payload: error.message 
@@ -125,77 +131,80 @@ const UpdateProfileModal = ({ open, handleClose, userVehiclesDispatch, userVehic
                 alignItems: 'stretch',
                 overflow: 'auto' // Allow modal to be scrollable if content exceeds height
             }}>
-                <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
-                    {imagePreview ? 
-                        <img 
-                            src={imagePreview} 
-                            alt="User Image" 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover'
-                            }} />
-                        : <div 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                backgroundColor: '#eee' 
-                            }}>
-                                Click to select image
-                        </div>
-                    }
-                    <IconButton sx={{ color: theme.palette.primary.main, position: 'absolute', top: 10, right: 10, backgroundColor: 'white', '&:hover': { backgroundColor: '#f0f0f0' } }}>
-                        <EditIcon />
-                    </IconButton>
-                </Box>
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2 }}>
-                    <Typography variant="h6" component="div" sx={{ mt: 0 }}>
-                        Update Profile
-                    </Typography>
-                    <form onSubmit={handleUserProfileUpdate} noValidate>
-                        <TextField
-                            name="name"
-                            label="Username"
-                            variant="outlined"
-                            margin="normal"
-                            value={username}
-                            onChange={onUsernameChange}
-                            fullWidth
-                        />
-                        <TextField
-                            name="profile"
-                            label="Profile"
-                            variant="outlined"
-                            margin="normal"
-                            value={profile}
-                            onChange={onProfileChange}
-                            fullWidth
-                            multiline
-                            rows={7}
-                        />
-                        {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
-                        <Button
-                            sx={{ mt: 1}}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                        >
-                            Update
-                        </Button>
-                    </form>
-                </Box>
-                <input
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={handleImageChange}
-                    ref={fileInputRef}
-                />
+                {isLoading ? (<Loader />):
+                    (<>
+                        <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
+                        {imagePreview ? 
+                            <img 
+                                src={imagePreview} 
+                                alt="User Image" 
+                                style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover'
+                                }} />
+                            : <div 
+                                style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    backgroundColor: '#eee' 
+                                }}>
+                                    Click to select image
+                            </div>
+                        }
+                        <IconButton sx={{ color: theme.palette.primary.main, position: 'absolute', top: 10, right: 10, backgroundColor: 'white', '&:hover': { backgroundColor: '#f0f0f0' } }}>
+                            <EditIcon />
+                        </IconButton>
+                    </Box>
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2 }}>
+                        <Typography variant="h6" component="div" sx={{ mt: 0 }}>
+                            Update Profile
+                        </Typography>
+                        <form onSubmit={handleUserProfileUpdate} noValidate>
+                            <TextField
+                                name="name"
+                                label="Username"
+                                variant="outlined"
+                                margin="normal"
+                                value={username}
+                                onChange={onUsernameChange}
+                                fullWidth
+                            />
+                            <TextField
+                                name="profile"
+                                label="Profile"
+                                variant="outlined"
+                                margin="normal"
+                                value={profile}
+                                onChange={onProfileChange}
+                                fullWidth
+                                multiline
+                                rows={7}
+                            />
+                            {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
+                            <Button
+                                sx={{ mt: 1}}
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                            >
+                                Update
+                            </Button>
+                        </form>
+                    </Box>
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                        ref={fileInputRef}
+                    />
+                </>)}
             </Box>
         </Modal>
     );
