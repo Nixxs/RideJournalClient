@@ -9,6 +9,7 @@ import UpdateVehicleModal from "../../modals/UpdateVehicleModal";
 import VehicleTimeline from "../../components/VehicleTimeline";
 import EventCard from "../../features/EventManager/EventCard";
 import CreateEventModal from "../../modals/CreateEventModal";
+import Loader from "../../components/Loader";
 
 function Vehicle() {
     const [updateVehicleModalOpen, setUpdateVehicleModalOpen] = useState(false); 
@@ -80,7 +81,7 @@ function Vehicle() {
         <GridItem>
           <Box sx={{ maxWidth: "75vw" }}>
             {vehicleDetailsState.vehicleDetails === null ? (
-              <p>loading...</p>
+              <Loader />
             ) : (
               <>
                 <VehicleProfile 

@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../features/AuthManager";
 import UpdateEventModal from "../../modals/UpdateEventModal";
+import Loader from "../../components/Loader";
 
 function EventCard({ eventId }) {
   const theme = useTheme();
@@ -117,7 +118,7 @@ function EventCard({ eventId }) {
   };
 
   return state.eventDetails === null ? (
-    <div>Loading...</div>
+    <Loader />
   ) : (
     <>
       <Card

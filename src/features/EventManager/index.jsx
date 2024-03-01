@@ -5,6 +5,7 @@ import Alert from "@mui/material/Alert";
 import EventCard from "./EventCard";
 import InfiniteScroll from "react-infinite-scroller";
 import { debounce } from 'lodash';
+import Loader from "../../components/Loader";
 
 function EventManager() {
   const { state, dispatch } = useContext(EventsContext);
@@ -65,7 +66,7 @@ function EventManager() {
         pageStart={0}
         loadMore={debouncedLoadMoreEvents}
         hasMore={hasMoreItems}
-        loader={<div key={0}>Loading...</div>}
+        loader={<Loader />}
       >
         {state.events.map((event) => (
           <Box

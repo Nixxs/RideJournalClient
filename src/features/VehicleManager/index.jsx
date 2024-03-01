@@ -5,6 +5,7 @@ import Alert from "@mui/material/Alert";
 import VehicleList from "../../components/VehiclesList";
 import InfiniteScroll from "react-infinite-scroller";
 import { debounce } from 'lodash';
+import Loader from "../../components/Loader";
 
 function VehicleManager() {
   const { state, dispatch } = useContext(VehiclesContext);
@@ -65,7 +66,7 @@ function VehicleManager() {
         pageStart={0}
         loadMore={debouncedLoadMoreVehicles}
         hasMore={hasMoreItems}
-        loader={<div key={0}>Loading...</div>}
+        loader={<Loader />}
       >
         <VehicleList vehicles={state.vehicles}/>
       </InfiniteScroll>

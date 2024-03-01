@@ -4,11 +4,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import { signUpReducer, initialState } from '../../reducers/signUpReducer';
 import Alert from '@mui/material/Alert';
 import { useAuth } from '../../features/AuthManager';
 import { login } from '../../features/AuthManager';
+import Loader from '../../components/Loader';
 
 const modalStyle = {
   position: 'absolute',
@@ -25,9 +26,11 @@ const modalStyle = {
 const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
     const { authState: {error}, dispatch: authDispatch } = useAuth(); 
     const [state, signUpDispatch] = useReducer(signUpReducer, initialState);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleCreateAccount = (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         const name = event.target.username.value;
         const email = event.target.email.value;
@@ -36,6 +39,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
         // first check if the passwords match if not just return with an error
         if (password !== event.target["confirm-password"].value) {
             signUpDispatch({ type: "SIGNUP_FAILURE", payload: "Passwords do not match" });
+            setIsLoading(false);
             return;
         }
 
@@ -52,6 +56,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.result === 200) {
+                    setIsLoading(false);
                     const userData = data.data;
                     signUpDispatch({ type: "SIGNUP_SUCCESS", payload: userData })
                     login(authDispatch, email, password);
@@ -63,9 +68,11 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                 }
             })
             .catch((error) => {
+                setIsLoading(false);
                 signUpDispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
             });
         } catch(error) {
+            setIsLoading(false);
             signUpDispatch({ type: "SIGNUP_FAILURE", payload: error.errors });
         }
     }
@@ -78,51 +85,59 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
             aria-describedby="create-account-modal-description"
         >
             <Box sx={modalStyle}>
-                <Typography id="sign-up-modal-title" variant="h6" component="h2">
-                    Create Account
-                </Typography>
-                <form onSubmit={handleCreateAccount}>
-                    <TextField
-                        id="username"
-                        label="Username"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        autoComplete="username"
-                    />
-                    <TextField
-                        id="email"
-                        label="Email"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        autoComplete="email" 
-                    />
-                    <TextField
-                        id="password"
-                        label="Password"
-                        type="password"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        autoComplete="new-password"
-                    />
-                    <TextField
-                        id="confirm-password"
-                        label="Confirm Password"
-                        type="password"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        autoComplete="new-password"
-                    />
-                    {state.error && <Alert severity="error">{state.error}</Alert>}
-                    <Button sx={{marginTop: 2}} type="submit" variant="contained">Create Account</Button>
-                </form>
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <Loader />
+                    </Box>
+                ) : (
+                    <>
+                        <Typography id="sign-up-modal-title" variant="h6" component="h2">
+                            Create Account
+                        </Typography>
+                        <form onSubmit={handleCreateAccount}>
+                            <TextField
+                                id="username"
+                                label="Username"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                autoComplete="username"
+                            />
+                            <TextField
+                                id="email"
+                                label="Email"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                autoComplete="email" 
+                            />
+                            <TextField
+                                id="password"
+                                label="Password"
+                                type="password"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                autoComplete="new-password"
+                            />
+                            <TextField
+                                id="confirm-password"
+                                label="Confirm Password"
+                                type="password"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                autoComplete="new-password"
+                            />
+                            {state.error && <Alert severity="error">{state.error}</Alert>}
+                            <Button sx={{marginTop: 2}} type="submit" variant="contained">Create Account</Button>
+                        </form>
+                    </>
+                )}
             </Box>
         </Modal>
     );

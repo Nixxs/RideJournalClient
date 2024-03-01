@@ -18,6 +18,7 @@ import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import { useAuth } from "../../features/AuthManager";
 import CreateVehicleModal from "../../modals/CreateVehicleModal";
+import Loader from "../../components/Loader";
 
 function MyVehicles() {
     const { authState } = useAuth();
@@ -190,7 +191,7 @@ function MyVehicles() {
                   </Box>
                 </>
               ) : (
-                  <p>Loading...</p>
+                  <Loader />
               )
           }
 
