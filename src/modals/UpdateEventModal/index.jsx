@@ -5,10 +5,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import { useAuth } from "../../features/AuthManager";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@emotion/react";
 import Grid from "@mui/material/Grid";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -16,24 +13,25 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
 
-const UpdateVehicleModal = ({
+const UpdateEventModal = ({
   open,
   handleClose,
   eventState,
   eventDispatch,
   handleRefreshData,
 }) => {
-  const theme = useTheme();
   const { authState, dispatch } = useAuth();
   const [title, setTitle] = useState(null);
   const [detail, setDetail] = useState(null);
   const [type, setType] = useState(null);
   const [date, setDate] = useState(null);
   const [odometer, setOdometer] = useState(null);
-  const [vehicleId, setVehicleId] = useState(null);
   const [openDeleteDialog, setopenDeleteDialog] = useState(false);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     setTitle(eventState.eventDetails.title);
@@ -41,7 +39,6 @@ const UpdateVehicleModal = ({
     setType(eventState.eventDetails.type);
     setDate(eventState.eventDetails.date);
     setOdometer(eventState.eventDetails.odometer);
-    setVehicleId(eventState.eventDetails.vehicleId);
   }, [eventState.eventDetails]);
 
   const handleOpenDeleteDialog = () => {
@@ -117,6 +114,7 @@ const UpdateVehicleModal = ({
 
   const handleEventUpdate = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const title = event.target.title.value;
     const detail = event.target.detail.value;
@@ -142,6 +140,7 @@ const UpdateVehicleModal = ({
         .then((data) => {
           switch (data.result) {
             case 200:
+              setIsLoading(false);
               eventDispatch({
                 type: "UPDATE_EVENT_DETAIL_SUCCESS",
                 payload: data.data,
@@ -150,6 +149,7 @@ const UpdateVehicleModal = ({
               handleRefreshData();
               break;
             default:
+              setIsLoading(false);
               eventDispatch({
                 type: "UPDATE_EVENT_DETAIL_FAILURE",
                 payload: data.errors[0].msg,
@@ -181,111 +181,114 @@ const UpdateVehicleModal = ({
             overflow: "auto", // Allow modal to be scrollable if content exceeds height
           }}
         >
-          <Box
-            sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 2 }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ mt: 0, mb: 2, flex: 1 }}
+          {isLoading ? (<Loader />) : (<>
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 2 }} >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
               >
-                Update Event
-              </Typography>
-              {/* checking if the user is the owner of the vehicle */}
-              {authState.isAuthenticated && authState.user.id === eventState.eventDetails.userId && (
-                  <Button
-                    sx={{ mt: 0, mb: 2, flex: 0 }}
-                    onClick={handleOpenDeleteDialog}
-                    variant="outlined"
-                    color="error"
-                    security="delete"
-                    size="small"
-                    fullWidth
-                  >
-                    Delete
-                  </Button>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ mt: 0, mb: 2, flex: 1 }}
+                >
+                  Update Event
+                </Typography>
+                {/* checking if the user is the owner of the vehicle */}
+                {authState.isAuthenticated && authState.user.id === eventState.eventDetails.userId && (
+                    <Button
+                      sx={{ mt: 0, mb: 2, flex: 0 }}
+                      onClick={handleOpenDeleteDialog}
+                      variant="outlined"
+                      color="error"
+                      security="delete"
+                      size="small"
+                      fullWidth
+                    >
+                      Delete
+                    </Button>
+                  )}
+              </Box>
+              <form onSubmit={handleEventUpdate}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} sm={8}>
+                    <TextField
+                      name="title"
+                      label="Event Title"
+                      variant="outlined"
+                      margin="normal"
+                      value={title}
+                      onChange={onTitleChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      name="type"
+                      label="Type"
+                      variant="outlined"
+                      margin="normal"
+                      value={type}
+                      onChange={onTypeChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      name="date"
+                      label="Date"
+                      variant="outlined"
+                      type="date"
+                      margin="normal"
+                      value={date}
+                      onChange={onDateChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      name="odometer"
+                      label="Odometer"
+                      variant="outlined"
+                      margin="normal"
+                      type="number"
+                      value={odometer}
+                      onChange={onOdometerChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      name="detail"
+                      label="Details"
+                      variant="outlined"
+                      margin="normal"
+                      value={detail}
+                      onChange={onDetailChange}
+                      fullWidth
+                      multiline
+                      rows={5}
+                    />
+                  </Grid>
+                </Grid>
+                {eventState.error && (
+                  <Alert severity="error">{eventState.error}</Alert>
                 )}
+                <Button
+                  sx={{ mt: 2 }}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Update
+                </Button>
+              </form>
             </Box>
-            <form onSubmit={handleEventUpdate}>
-              <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="title"
-                    label="Event Title"
-                    variant="outlined"
-                    margin="normal"
-                    value={title}
-                    onChange={onTitleChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="detail"
-                    label="Details"
-                    variant="outlined"
-                    margin="normal"
-                    value={detail}
-                    onChange={onDetailChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="type"
-                    label="Type"
-                    variant="outlined"
-                    margin="normal"
-                    value={type}
-                    onChange={onTypeChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="date"
-                    label="Date"
-                    variant="outlined"
-                    type="date"
-                    margin="normal"
-                    value={date}
-                    onChange={onDateChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="odometer"
-                    label="Odometer"
-                    variant="outlined"
-                    margin="normal"
-                    type="number"
-                    value={odometer}
-                    onChange={onOdometerChange}
-                    fullWidth
-                  />
-                </Grid>
-              </Grid>
-              {eventState.error && (
-                <Alert severity="error">{eventState.error}</Alert>
-              )}
-              <Button
-                sx={{ mt: 2 }}
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                Update
-              </Button>
-            </form>
-          </Box>
+          </>)}
+
         </Box>
       </Modal>
 
@@ -312,4 +315,4 @@ const UpdateVehicleModal = ({
   );
 };
 
-export default UpdateVehicleModal;
+export default UpdateEventModal;
