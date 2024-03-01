@@ -16,6 +16,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
 
 const UpdateVehicleModal = ({
   open,
@@ -37,6 +38,7 @@ const UpdateVehicleModal = ({
   const fileInputRef = useRef(null);
   const [openDeleteDialog, setopenDeleteDialog] = useState(false);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
       setImagePreview(
@@ -126,6 +128,7 @@ const UpdateVehicleModal = ({
 
   const handleVehicleProfileUpdate = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const name = event.target.name.value;
     const location = event.target.location.value;
@@ -162,6 +165,7 @@ const UpdateVehicleModal = ({
       .then((data) => {
         switch (data.result) {
           case 200:
+            setIsLoading(false);
             vehicleDetailsDispatch({
               type: "UPDATE_VEHICLE_DETAIL_SUCCESS",
               payload: data,
@@ -170,6 +174,7 @@ const UpdateVehicleModal = ({
             handleClose();
             break;
           default:
+            setIsLoading(false);
             vehicleDetailsDispatch({
               type: "UPDATE_VEHICLE_DETAIL_FAILURE",
               payload: data.errors[0].msg,
@@ -178,9 +183,10 @@ const UpdateVehicleModal = ({
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         vehicleDetailsDispatch({
           type: "UPDATE_VEHICLE_DETAIL_FAILURE",
-          payload: error,
+          payload: error.message,
         });
       });
   };
@@ -219,176 +225,178 @@ const UpdateVehicleModal = ({
             overflow: "auto", // Allow modal to be scrollable if content exceeds height
           }}
         >
-          <Box
-            sx={{ flex: 1, position: "relative", cursor: "pointer" }}
-            onClick={triggerFileInputClick}
-          >
-            {imagePreview ? (
-              <img
-                src={imagePreview}
-                alt="User Image"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#eee",
-                }}
-              >
-                Click to select image
-              </div>
-            )}
-            <IconButton
-              sx={{
-                color: theme.palette.primary.main,
-                position: "absolute",
-                top: 10,
-                right: 10,
-                backgroundColor: "white",
-                "&:hover": { backgroundColor: "#f0f0f0" },
-              }}
-            >
-              <EditIcon />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 2 }}
-          >
+          {isLoading ? (<Loader />) : (<>
             <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-              }}
+              sx={{ flex: 1, position: "relative", cursor: "pointer" }}
+              onClick={triggerFileInputClick}
             >
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ mt: 0, mb: 2, flex: 1 }}
-              >
-                Update Vehicle
-              </Typography>
-              {/* checking if the user is the owner of the vehicle */}
-              {authState.isAuthenticated &&
-                authState.user.id ===
-                  vehicleDetailsState.vehicleDetails.User.id && (
-                  <Button
-                    sx={{ mt: 0, mb: 2, flex: 0 }}
-                    onClick={handleOpenDeleteDialog}
-                    variant="outlined"
-                    color="error"
-                    security="delete"
-                    size="small"
-                    fullWidth
-                  >
-                    Delete
-                  </Button>
-                )}
-            </Box>
-            <form onSubmit={handleVehicleProfileUpdate} noValidate>
-              <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="name"
-                    label="Vehicle Name"
-                    variant="outlined"
-                    margin="normal"
-                    value={name}
-                    onChange={onNameChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="location"
-                    label="Location"
-                    variant="outlined"
-                    margin="normal"
-                    value={location}
-                    onChange={onLocationChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="year"
-                    label="Year"
-                    type="number"
-                    variant="outlined"
-                    margin="normal"
-                    value={year}
-                    onChange={onYearChange}
-                    fullWidth
-                    inputProps={{ min: 1900, max: new Date().getFullYear() }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="make"
-                    label="Make"
-                    variant="outlined"
-                    margin="normal"
-                    value={make}
-                    onChange={onMakeChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    name="model"
-                    label="Model"
-                    variant="outlined"
-                    margin="normal"
-                    value={model}
-                    onChange={onModelChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    name="profile"
-                    label="Profile"
-                    variant="outlined"
-                    margin="normal"
-                    value={profile}
-                    onChange={onProfileChange}
-                    fullWidth
-                    multiline
-                    rows={5}
-                  />
-                </Grid>
-              </Grid>
-              {vehicleDetailsState.error && (
-                <Alert severity="error">{vehicleDetailsState.error}</Alert>
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="User Image"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#eee",
+                  }}
+                >
+                  Click to select image
+                </div>
               )}
-              <Button
-                sx={{ mt: 2 }}
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
+              <IconButton
+                sx={{
+                  color: theme.palette.primary.main,
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  backgroundColor: "white",
+                  "&:hover": { backgroundColor: "#f0f0f0" },
+                }}
               >
-                Update
-              </Button>
-            </form>
-          </Box>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleImageChange}
-            ref={fileInputRef}
-            required={true}
-          />
+                <EditIcon />
+              </IconButton>
+            </Box>
+            <Box
+              sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 2 }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ mt: 0, mb: 2, flex: 1 }}
+                >
+                  Update Vehicle
+                </Typography>
+                {/* checking if the user is the owner of the vehicle */}
+                {authState.isAuthenticated &&
+                  authState.user.id ===
+                    vehicleDetailsState.vehicleDetails.User.id && (
+                    <Button
+                      sx={{ mt: 0, mb: 2, flex: 0 }}
+                      onClick={handleOpenDeleteDialog}
+                      variant="outlined"
+                      color="error"
+                      security="delete"
+                      size="small"
+                      fullWidth
+                    >
+                      Delete
+                    </Button>
+                  )}
+              </Box>
+              <form onSubmit={handleVehicleProfileUpdate} noValidate>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      name="name"
+                      label="Vehicle Name"
+                      variant="outlined"
+                      margin="normal"
+                      value={name}
+                      onChange={onNameChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      name="location"
+                      label="Location"
+                      variant="outlined"
+                      margin="normal"
+                      value={location}
+                      onChange={onLocationChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      name="year"
+                      label="Year"
+                      type="number"
+                      variant="outlined"
+                      margin="normal"
+                      value={year}
+                      onChange={onYearChange}
+                      fullWidth
+                      inputProps={{ min: 1900, max: new Date().getFullYear() }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      name="make"
+                      label="Make"
+                      variant="outlined"
+                      margin="normal"
+                      value={make}
+                      onChange={onMakeChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      name="model"
+                      label="Model"
+                      variant="outlined"
+                      margin="normal"
+                      value={model}
+                      onChange={onModelChange}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      name="profile"
+                      label="Profile"
+                      variant="outlined"
+                      margin="normal"
+                      value={profile}
+                      onChange={onProfileChange}
+                      fullWidth
+                      multiline
+                      rows={5}
+                    />
+                  </Grid>
+                </Grid>
+                {vehicleDetailsState.error && (
+                  <Alert severity="error">{vehicleDetailsState.error}</Alert>
+                )}
+                <Button
+                  sx={{ mt: 2 }}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Update
+                </Button>
+              </form>
+            </Box>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+              ref={fileInputRef}
+              required={true}
+            />
+          </>)}
         </Box>
       </Modal>
 
