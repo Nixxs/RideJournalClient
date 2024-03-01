@@ -1,6 +1,7 @@
 export const initialState = {
     vehicleDetails: null,
     error: null,
+    loading: false
 }
 
 export const vehicleDetailsReducer = (state, action) => {
@@ -59,7 +60,10 @@ export const vehicleDetailsReducer = (state, action) => {
                 error: action.payload
             }
         case "POST_EVENT_IMAGE_SUCCESS":
-            return state
+            return {
+                ...state,
+                error: null
+            }
         case "POST_EVENT_IMAGE_FAILURE":
             return {
                 ...state,

@@ -66,7 +66,7 @@ function EventManager() {
         pageStart={0}
         loadMore={debouncedLoadMoreEvents}
         hasMore={hasMoreItems}
-        loader={<Loader />}
+        loader={<Loader key={`loader-${offset}`} />} 
       >
         {state.events.map((event) => (
           <Box

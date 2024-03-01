@@ -10,6 +10,7 @@ import { useAuth } from '../../features/AuthManager';
 import { login } from '../../features/AuthManager';
 import Alert from '@mui/material/Alert';
 import { useState, useEffect } from 'react';
+import Loader from '../../components/Loader';
 
 const modalStyle = {
   position: 'absolute',
@@ -27,6 +28,7 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
     const { authState, dispatch } = useAuth(); 
     const [createAccountOpen, setCreateAccountOpen] = useState(false);
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setError(null);
@@ -34,11 +36,13 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
 
     const handleLogin = (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         const email = event.target.email.value;
         const password = event.target.password.value;
 
         login(dispatch, email, password).then((response) => {
+            setIsLoading(false);
             if (response === "success") {
                 handleClose();
             } else {
@@ -61,49 +65,51 @@ const LoginModal = ({ open, handleClose, handleOpenSignUp }) => {
             aria-describedby="modal-modal-description"
         >
             <Box sx={modalStyle}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Login/Sign Up
-                </Typography>
-                < form onSubmit={handleLogin} >
-                    <TextField
-                        id="email"
-                        label="Email"
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        autoComplete="email"
-                    />
-                    <TextField
-                        id="password"
-                        label="Password"
-                        type="password"
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        required
-                        autoComplete="current-password" 
-                    />
-                    {error && <Alert severity="error">{error}</Alert>}
+                {isLoading ? (<Loader />):(<>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Login/Sign Up
+                    </Typography>
+                    < form onSubmit={handleLogin} >
+                        <TextField
+                            id="email"
+                            label="Email"
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            required
+                            autoComplete="email"
+                        />
+                        <TextField
+                            id="password"
+                            label="Password"
+                            type="password"
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            required
+                            autoComplete="current-password" 
+                        />
+                        {error && <Alert severity="error">{error}</Alert>}
+                        <Button
+                            sx={{ mt: 2, mb: 2}}
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                        >Login</Button>
+                        
+                    </form>
+                    <Divider />
                     <Button
-                        sx={{ mt: 2, mb: 2}}
-                        type="submit"
-                        variant="contained"
-                        color="primary"
+                        sx={{ 
+                            mt: 2, 
+                            mb: 2,
+                        }}
+                        onClick={handleCreateAccountOpen}
+                        variant="outlined"
                         fullWidth
-                    >Login</Button>
-                    
-                </form>
-                <Divider />
-                <Button
-                    sx={{ 
-                        mt: 2, 
-                        mb: 2,
-                    }}
-                    onClick={handleCreateAccountOpen}
-                    variant="outlined"
-                    fullWidth
-                >Sign Up</Button>
+                    >Sign Up</Button>
+                </>)}
             </Box>
         </Modal>
     );

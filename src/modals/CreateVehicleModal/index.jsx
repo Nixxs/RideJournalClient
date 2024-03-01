@@ -10,12 +10,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@emotion/react';
 import Grid from '@mui/material/Grid';
+import Loader from '../../components/Loader';
 
 const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehiclesState, handleRefreshData }) => {
     const theme = useTheme();
     const { authState, dispatch } = useAuth(); 
     const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef(null); 
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (authState.isAuthenticated && authState.user.image) {
@@ -25,6 +27,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehic
 
     const handleVehicleProfileUpdate = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         const name = event.target.name.value;
         const location = event.target.location.value;
@@ -59,6 +62,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehic
         .then(vehicleData => {
             switch (vehicleData.result) {
                 case 200:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "ADD_VEHICLE_SUCCESS", 
                         payload: vehicleData.data
@@ -67,18 +71,21 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehic
                     handleClose();
                     break;
                 case 404:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "ADD_VEHICLE_FAILURE", 
                         payload: vehicleData.errors[0].msg
                     });
                     break;
                 case 422:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "ADD_VEHICLE_FAILURE", 
                         payload: vehicleData.errors[0].msg
                     });
                     break;
                 default:
+                    setIsLoading(false);
                     userVehiclesDispatch({ 
                         type: "ADD_VEHICLE_FAILURE", 
                         payload: vehicleData.errors[0].msg
@@ -86,6 +93,7 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehic
             }
         })
         .catch((error) => {
+            setIsLoading(false);
             userVehiclesDispatch({ 
                 type: "ADD_VEHICLE_FAILURE", 
                 payload: error.message
@@ -124,123 +132,127 @@ const CreateVehicleModal = ({ open, handleClose, userVehiclesDispatch, userVehic
                 alignItems: 'stretch',
                 overflow: 'auto' // Allow modal to be scrollable if content exceeds height
             }}>
-                <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
-                    {imagePreview ? 
-                        <img 
-                            src={imagePreview} 
-                            alt="User Image" 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover'
-                            }} />
-                        : <div 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                backgroundColor: '#eee' 
-                            }}>
-                                Click to select image
-                        </div>
-                    }
-                    <IconButton sx={{ color: theme.palette.primary.main, position: 'absolute', top: 10, right: 10, backgroundColor: 'white', '&:hover': { backgroundColor: '#f0f0f0' } }}>
-                        <EditIcon />
-                    </IconButton>
-                </Box>
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
-                    <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
-                        Create Vehicle
-                    </Typography>
-                    <form onSubmit={handleVehicleProfileUpdate}>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    name="name"
-                                    label="Vehicle Name"
-                                    variant="outlined"
-                                    margin="normal"
+                {isLoading ? (<Loader />):( 
+                    <>
+                        <Box sx={{ flex: 1, position: 'relative', cursor: 'pointer' }} onClick={triggerFileInputClick}>
+                            {imagePreview ? 
+                                <img 
+                                    src={imagePreview} 
+                                    alt="User Image" 
+                                    style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        objectFit: 'cover'
+                                    }} />
+                                : <div 
+                                    style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        display: 'flex', 
+                                        justifyContent: 'center', 
+                                        alignItems: 'center', 
+                                        backgroundColor: '#eee' 
+                                    }}>
+                                        Click to select image
+                                </div>
+                            }
+                            <IconButton sx={{ color: theme.palette.primary.main, position: 'absolute', top: 10, right: 10, backgroundColor: 'white', '&:hover': { backgroundColor: '#f0f0f0' } }}>
+                                <EditIcon />
+                            </IconButton>
+                        </Box>
+                        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
+                            <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
+                                Create Vehicle
+                            </Typography>
+                            <form onSubmit={handleVehicleProfileUpdate}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            name="name"
+                                            label="Vehicle Name"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            name="location"
+                                            label="Location"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4}>
+                                        <TextField
+                                            name="year"
+                                            label="Year"
+                                            type="number"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                            inputProps={{ min: 1900, max: new Date().getFullYear() }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4}>
+                                        <TextField
+                                            name="make"
+                                            label="Make"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4}>
+                                        <TextField
+                                            name="model"
+                                            label="Model"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            name="profile"
+                                            label="Profile"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            multiline
+                                            rows={5}
+                                        />
+                                    </Grid>
+                                </Grid>
+                                {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
+                                <Button
+                                    sx={{ mt: 1 }}
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
                                     fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    name="location"
-                                    label="Location"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    name="year"
-                                    label="Year"
-                                    type="number"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                    inputProps={{ min: 1900, max: new Date().getFullYear() }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    name="make"
-                                    label="Make"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    name="model"
-                                    label="Model"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    name="profile"
-                                    label="Profile"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    multiline
-                                    rows={5}
-                                />
-                            </Grid>
-                        </Grid>
-                        {userVehiclesState.error && <Alert severity="error">{userVehiclesState.error}</Alert>}
-                        <Button
-                            sx={{ mt: 1 }}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                        >
-                            Create
-                        </Button>
-                    </form>
-                </Box>
-                <input
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={handleImageChange}
-                    ref={fileInputRef}
-                    required={true}
-                />
+                                >
+                                    Create
+                                </Button>
+                            </form>
+                        </Box>
+                        <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleImageChange}
+                            ref={fileInputRef}
+                            required={true}
+                        />
+                    </>
+                )}
             </Box>
         </Modal>
     );

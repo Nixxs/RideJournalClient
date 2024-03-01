@@ -66,7 +66,7 @@ function VehicleManager() {
         pageStart={0}
         loadMore={debouncedLoadMoreVehicles}
         hasMore={hasMoreItems}
-        loader={<Loader />}
+        loader={<Loader key={`loader-${offset}`} />} 
       >
         <VehicleList vehicles={state.vehicles}/>
       </InfiniteScroll>

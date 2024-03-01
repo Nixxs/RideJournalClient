@@ -63,7 +63,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
                     handleClose();
                     handleOpenNotification();
                 } else {
-                    console.log(data.errors[0].msg);
+                    setIsLoading(false);
                     signUpDispatch({ type: "SIGNUP_FAILURE", payload: data.errors[0].msg });
                 }
             })
@@ -86,9 +86,7 @@ const SignUpModal = ({ open, handleClose, handleOpenNotification }) => {
         >
             <Box sx={modalStyle}>
                 {isLoading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                        <Loader />
-                    </Box>
+                    <Loader />
                 ) : (
                     <>
                         <Typography id="sign-up-modal-title" variant="h6" component="h2">

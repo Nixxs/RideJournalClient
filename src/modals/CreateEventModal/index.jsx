@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import Loader from '../../components/Loader';
 
 
 const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRefreshData, vehicleDetailsState, updateSelectedEventId }) => {
@@ -20,6 +21,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
     const fileInputRef = useRef(null); 
     const [selectedType, setSelectedType] = useState('story');
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const eventOptions = ['repair', 'modification', 'story', 'maintenance'];
 
@@ -42,6 +44,7 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
 
     const handleCreateEvent = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         if (images.length === 0) {
             setError("Please set at least 1 image for this event");
@@ -83,19 +86,21 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                     });
                     return eventData.data.id;
                 case 404:
+                    setIsLoading(false);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_FAILURE", 
                         payload: eventData.errors[0].msg
                     });
                     break;
                 case 422:
-                    console.log(eventData.errors);
+                    setIsLoading(false);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_FAILURE", 
                         payload: eventData.errors[0].msg
                     });
                     break;
                 default:
+                    setIsLoading(false);
                     vehicleDetailsDispatch({ 
                         type: "ADD_EVENT_FAILURE", 
                         payload: "Unknown error"
@@ -105,9 +110,13 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
         })
         .then(eventId =>{
             uploadImages(eventId).then(() => {
-                handleRefreshData();
-                updateSelectedEventId(eventId);
-                handleClose();
+                setIsLoading(false);
+
+                if (!error) {
+                    handleRefreshData();
+                    updateSelectedEventId(eventId);
+                    handleClose();
+                }
             })
         })
         .catch((error) => {
@@ -164,10 +173,10 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
     
         try {
             await Promise.all(promises);
-        } catch (error) {
+        } catch (er) {
             vehicleDetailsDispatch({ 
                 type: "ADD_EVENT_FAILURE", 
-                payload: error
+                payload: er
             });
         }
     };
@@ -206,140 +215,146 @@ const CreateEventModal = ({ open, handleClose, vehicleDetailsDispatch, handleRef
                 alignItems: 'stretch',
                 overflow: 'auto' 
             }}>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    flex: 1,
-                    position: 'relative',
-                }}>
-                    <input
-                        type="file"
-                        multiple
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        onChange={handleImageChange}
-                        accept="image/*"
-                    />
-                    <Box sx={{
-                        backgroundColor: theme.palette.grey[300],
-                        borderRadius: "5px"
-                    }}
-                    >
-                        {images.length > 0 && (
-                            <ImageList sx={{ padding: 2, maxWidth: 450, maxHeight: 355 }} cols={3} rowHeight={140}>
-                                {images.map((image) => (
-                                    <ImageListItem key={image.id}>
-                                        <img
-                                            src={image.url} // Use the object URL stored in the images state
-                                            alt={`image-${image.id}`}
-                                            loading="lazy"
-                                        />
-                                    </ImageListItem>
-                                ))}
-                            </ImageList>
-                        )}
-                    </Box>
-                    <Button 
-                        onClick={triggerFileInputClick} 
-                        sx={{ margin: 3, width: 200}}
-                        variant="outlined"
-                    >
-                        Add Images
-                    </Button>
-                </Box>
+                {isLoading ? (
+                    <Loader />
+                ):(
+                    <>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            flex: 1,
+                            position: 'relative',
+                        }}>
+                            <input
+                                type="file"
+                                multiple
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
+                                onChange={handleImageChange}
+                                accept="image/*"
+                            />
+                            <Box sx={{
+                                backgroundColor: theme.palette.grey[300],
+                                borderRadius: "5px"
+                            }}
+                            >
+                                {images.length > 0 && (
+                                    <ImageList sx={{ padding: 2, maxWidth: 450, maxHeight: 355 }} cols={3} rowHeight={140}>
+                                        {images.map((image) => (
+                                            <ImageListItem key={image.id}>
+                                                <img
+                                                    src={image.url} // Use the object URL stored in the images state
+                                                    alt={`image-${image.id}`}
+                                                    loading="lazy"
+                                                />
+                                            </ImageListItem>
+                                        ))}
+                                    </ImageList>
+                                )}
+                            </Box>
+                            <Button 
+                                onClick={triggerFileInputClick} 
+                                sx={{ margin: 3, width: 200}}
+                                variant="outlined"
+                            >
+                                Add Images
+                            </Button>
+                        </Box>
 
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
-                    <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
-                        Create Event
-                    </Typography>
-                    <form onSubmit={handleCreateEvent}>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12} sm={8}>
-                                <TextField
-                                    name="title"
-                                    label="Title"
-                                    variant="outlined"
-                                    margin="normal"
+                        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', ml: 2,  }}>
+                            <Typography variant="h6" component="div" sx={{ mt: 0, mb: 2 }}>
+                                Create Event
+                            </Typography>
+                            <form onSubmit={handleCreateEvent}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12} sm={8}>
+                                        <TextField
+                                            name="title"
+                                            label="Title"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={4}>
+                                        <TextField
+                                            select
+                                            name="type"
+                                            label="Type"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                            value={selectedType}
+                                            onChange={handleEventTypeChange}
+                                        >
+                                            {eventOptions.map((option) => (
+                                                <MenuItem key={option} value={option}>
+                                                {option}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            name="date"
+                                            type="date"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            name="odometer"
+                                            label="Odometer"
+                                            type="number"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            name="detail"
+                                            label="Details"
+                                            variant="outlined"
+                                            margin="normal"
+                                            fullWidth
+                                            required
+                                            multiline
+                                            rows={5}
+                                        />
+                                    </Grid>
+                                </Grid>
+                                {error && <Alert severity="error">{error}</Alert>}
+                                <Button
+                                    sx={{ mt: 2 }}
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
                                     fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    select
-                                    name="type"
-                                    label="Type"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                    value={selectedType}
-                                    onChange={handleEventTypeChange}
                                 >
-                                    {eventOptions.map((option) => (
-                                        <MenuItem key={option} value={option}>
-                                        {option}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    name="date"
-                                    type="date"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    name="odometer"
-                                    label="Odometer"
-                                    type="number"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    name="detail"
-                                    label="Details"
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    required
-                                    multiline
-                                    rows={5}
-                                />
-                            </Grid>
-                        </Grid>
-                        {error && <Alert severity="error">{error}</Alert>}
-                        <Button
-                            sx={{ mt: 2 }}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                        >
-                            Create
-                        </Button>
-                    </form>
-                </Box>
-                <input
-                    type="file"
-                    multiple
-                    name="image"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={handleImageChange}
-                    ref={fileInputRef}
-                    required={true}
-                />
+                                    Create
+                                </Button>
+                            </form>
+                        </Box>
+                        <input
+                            type="file"
+                            multiple
+                            name="image"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleImageChange}
+                            ref={fileInputRef}
+                            required={true}
+                        />
+                    </>
+                )}
             </Box>
         </Modal>
     );
