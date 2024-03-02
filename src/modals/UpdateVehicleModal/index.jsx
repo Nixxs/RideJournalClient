@@ -61,11 +61,11 @@ const UpdateVehicleModal = ({
 
   const handleCloseDeleteDialog = () => {
     setopenDeleteDialog(false);
-    handleCloseDeleteDialog();
   };
 
   const handleConfirmDelete = async () => {
     setIsLoading(true);
+    handleCloseDeleteDialog();
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/vehicles/${vehicleId}`,
       {

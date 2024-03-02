@@ -55,6 +55,7 @@ const UpdateEventModal = ({
 
   const handleConfirmDelete = async () => {
     setIsLoading(true);
+    handleCloseDeleteDialog();
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/events/${eventState.eventDetails.id}`,
       {
@@ -73,8 +74,6 @@ const UpdateEventModal = ({
               type: "DELETE_EVENT_SUCCESS",
               payload: data.data,
             });
-
-            handleCloseDeleteDialog();
             handleClose();
             handleRefresh();
             break;
