@@ -143,11 +143,12 @@ function Navigation() {
     <Drawer variant="permanent" open={open} sx={{ display: 'flex', flexDirection: 'column' }}>
       <DrawerHeader>
         <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-          <Typography
-            variant="h6"
-            noWrap
-            sx={{
-              mr: 2,
+          <img 
+            src="/RJ_HalfStack_Logo.png" 
+            alt="RIDE JOURNAL" 
+            width={open ? 150 : 50}
+            style={{
+              marginRight: '8px',
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 900,
@@ -158,9 +159,7 @@ function Navigation() {
                 textShadow: '0 0 10px rgba(0, 0, 0, 0.2)', // Add a text shadow on hover
               },
             }}
-          >
-            RIDE JOURNAL
-          </Typography>
+          />
         </NavLink>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === "rtl" ? (
