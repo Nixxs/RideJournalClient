@@ -7,6 +7,9 @@ import { styled } from "@mui/material/styles";
 import { useContext } from "react";
 import { layoutContext } from "../../layouts";
 import { drawerWidth } from "../../layouts";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useEffect } from "react";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -28,6 +31,14 @@ const AppBar = styled(MuiAppBar, {
 
 function Header() {
   const { open, setOpen, pageTitle } = useContext(layoutContext);
+  const theme = useTheme();
+  const isXsScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
+  useEffect(() => {
+    if (isXsScreen) {
+      setOpen(false);
+    }
+  }, [isXsScreen, setOpen]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
