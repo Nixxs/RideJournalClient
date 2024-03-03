@@ -24,6 +24,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../features/AuthManager";
 import UpdateEventModal from "../../modals/UpdateEventModal";
 import Loader from "../../components/Loader";
+import MediaModal from "../../modals/MediaModal";
 
 function EventCard({ eventId }) {
   const theme = useTheme();
@@ -32,6 +33,15 @@ function EventCard({ eventId }) {
   const { authState } = useAuth();
   const [updateEventModalOpen, setUpdateEventModalOpen] = useState(false);
   const [refreshData, setRefreshData] = useState(false);
+  const [mediaModalOpen, setMediaModalOpen] = useState(false);
+
+  const handleMediaModalOpen = () => {
+    setMediaModalOpen(true);
+  }
+
+  const handleMediaModalClose = () => {
+    setMediaModalOpen(false);
+  }
 
   const handleRefreshData = () => {
     setRefreshData(true);
@@ -126,7 +136,7 @@ function EventCard({ eventId }) {
           display: "flex",
           flexDirection: "column",
           minHeight: "50vh",
-          maxWidth: "75vw",
+          maxWidth: "900px",
           minWidth: 300,
 
           // If you want the image to take full width on small screens
@@ -171,34 +181,52 @@ function EventCard({ eventId }) {
             </Box>
           </CardContent>
           {state.eventDetails?.Images.length > 0 && (
-            <ImageList
-              sx={{
-                width: "100%",
-                height: "100%",
-                margin: 0,
-              }}
-              rowHeight={450}
-              cols={1}
-            >
-              <ImageListItem key={state.eventDetails.Images[currentIndex]?.id}>
-                <img
-                  src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
-                    state.eventDetails.Images[currentIndex]?.image
-                  }?w=500&h=450&fit=crop&auto=format`}
-                  srcSet={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
-                    state.eventDetails.Images[currentIndex]?.image
-                  }?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
-                  alt={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex]?.id}`}
-                  loading="lazy"
-                  className="fade-in"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+            <>
+              <ImageList
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  margin: 0,
+                }}
+                rowHeight={450}
+                cols={1}
+              >
+                <ImageListItem 
+                  key={state.eventDetails.Images[currentIndex]?.id} 
+                  onClick={handleMediaModalOpen}
+                  sx={{
+                    cursor: "pointer",
+                    "&:hover": {
+                      opacity: 0.7,
+                    },
                   }}
-                />
-              </ImageListItem>
-            </ImageList>
+                >
+                  <img
+                    src={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                      state.eventDetails.Images[currentIndex]?.image
+                    }?w=500&h=450&fit=crop&auto=format`}
+                    srcSet={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
+                      state.eventDetails.Images[currentIndex]?.image
+                    }?w=500&h=450&fit=crop&auto=format&dpr=2 2x`}
+                    alt={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex]?.id}`}
+                    loading="lazy"
+                    className="fade-in"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </ImageListItem>
+              </ImageList>
+
+              <MediaModal 
+                isOpen={mediaModalOpen} 
+                onClose={handleMediaModalClose}
+                imageURL={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${state.eventDetails.Images[currentIndex]?.image}`}
+                imageTitle={`${state.eventDetails.title}-${state.eventDetails.Images[currentIndex]?.id}`}
+              />
+            </>
           )}
           {state.eventDetails?.Images.length > 1 && (
             <>
@@ -314,6 +342,8 @@ function EventCard({ eventId }) {
         eventDispatch={dispatch}
         handleRefreshData={handleRefreshData}
       />
+
+
     </>
   );
 }

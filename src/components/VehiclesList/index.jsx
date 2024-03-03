@@ -30,9 +30,9 @@ function VehicleList({vehicles}) {
         <Grid container spacing={3}>
           {vehicles.map((vehicle) => (
             <Grid item xs={12} sm={6} md={4} key={vehicle.id}>
-              <Card sx={{ maxWidth: "50vw", m: "auto", }}>
+              <Card sx={{ m: "auto", }}>
                 <CardMedia
-                  sx={{ height: 300 }}
+                  sx={{ minHeight: "300px" }}
                   image={`${import.meta.env.VITE_REACT_APP_SERVER_URL}/images/${
                     vehicle.image
                   }`}

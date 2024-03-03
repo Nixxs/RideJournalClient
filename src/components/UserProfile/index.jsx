@@ -10,12 +10,16 @@ function UserProfile({ userData, openUpdateUserProfileModal }) {
   const { authState } = useAuth();
 
   return (
-    <Card sx={{ display: 'flex', width: '100%', height: '100%', marginRight: 3, maxHeight: "240px"}}>
+    <Card sx={{ 
+      display: 'flex', 
+      flexDirection: { xs: 'column', sm: 'row' },
+      width: '100%', 
+      height: '100%', 
+      marginRight: 3, 
+      maxHeight: {md: "240px"}
+    }}>
       <Box
-        sx={{
-          width: '30%',
-          objectFit: 'contain', // This ensures the image covers the area without stretching
-        }}
+        sx={{ width: { sm: '30%' }, maxWidth: '100%' }}
       >
         <CardMedia
           component="img"
@@ -36,9 +40,9 @@ function UserProfile({ userData, openUpdateUserProfileModal }) {
                     onClick={openUpdateUserProfileModal}
                     sx={{
                         marginLeft: "auto",
-                        padding: "3px 10px", // Reduces vertical padding, adjusts horizontal padding
-                        minHeight: "0", // Allows the button to be smaller in height
-                        height: "fit-content", // Ensures the button height only fits its content
+                        padding: "3px 10px", 
+                        minHeight: "0", 
+                        height: "fit-content", 
                     }}
                     size="small"
                 >
