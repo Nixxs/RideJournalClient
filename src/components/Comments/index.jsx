@@ -1,31 +1,35 @@
 import IconButton from "@mui/material/IconButton";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import Tooltip from "@mui/material/Tooltip";
-import { useEffect, useReducer, useContext } from "react";
 import { commentReducer, initialState } from "../../reducers/commentReducer";
-import { layoutContext } from "../../layouts";
+import CommentsModal from "../../modals/CommentsModal";
+import { useState } from "react";
 
-function Comments({ eventId, commentData }) {
-  const { currentUser } = useContext(layoutContext);
-  const [state, dispatch] = useReducer(commentReducer, initialState);
+function Comments({ eventDetails }) {
+  const [commentsModalOpen, setCommentsModalOpen] = useState(false);
 
-  useEffect(() => {
-    dispatch({
-      type: "GET_COMMENTS_SUCCESS",
-      payload: commentData,
-    });
-  }, [commentData]);
-
-  const handleClick = (event) => {
-    console.log("handle the comments button click");
+  const handleClick = () => {
+    setCommentsModalOpen(true);
   };
 
-  return state.comments ? (
-    <Tooltip title={`${state.comments.length} comments`}>
-      <IconButton sx={{ p: 0 }} onClick={handleClick}>
-        <ChatBubbleOutlineIcon />
-      </IconButton>
-    </Tooltip>
+  const handleCloseCommentsModal = () => {
+    setCommentsModalOpen(false);
+  }
+
+  return eventDetails.Comments ? (
+    <>
+      <Tooltip title={`${eventDetails.Comments.length} comments`}>
+        <IconButton sx={{ p: 0 }} onClick={handleClick}>
+          <ChatBubbleOutlineIcon />
+        </IconButton>
+      </Tooltip>
+
+      <CommentsModal 
+        open={commentsModalOpen} 
+        handleClose={handleCloseCommentsModal}
+        eventDetails={eventDetails}
+      />
+    </>
   ) : null;
 }
 

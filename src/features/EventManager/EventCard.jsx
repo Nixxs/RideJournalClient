@@ -289,8 +289,7 @@ function EventCard({ eventId }) {
             </Box>
             <Box sx={{ marginLeft: 1 }}>
               <Comments
-                eventId={state.eventDetails.id}
-                commentData={state.eventDetails.Comments}
+                eventDetails={state.eventDetails}
                 sx={{ marginLeft: "30px" }}
               />
             </Box>
