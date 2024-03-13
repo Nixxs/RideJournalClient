@@ -8,7 +8,10 @@ import ImageListItem from '@mui/material/ImageListItem';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
+import UserAvatar from "../../components/UserAvatar";
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
+import Comment from './Comment';
 
 
 const CommentsModal = ({ open, handleClose, eventDetails}) => {
@@ -46,7 +49,7 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
         outline: 'none',
         display: "flex",
         flexDirection: "column",
-        minWidth: 400,
+        minWidth: 800,
       }}>
         {/* header box */}
         <Box>
@@ -65,7 +68,7 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
           <Box sx={{
               position: "relative",
               backgroundColor: "red",
-              flex: 2,
+              flex: 1,
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -141,10 +144,79 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
               )}
           </Box>
           <Box sx={{
-            backgroundColor: "blue",
             flex: 1
           }}>
-            <p>the right box</p>
+            {/* post description */}
+            <Divider />
+            <Box sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "5px",
+              padding: "10px",
+            
+            }}>
+              <Box sx={{m: "5px"}}>
+                <UserAvatar userData={eventDetails.User} size={30} />
+              </Box>
+              <Box>
+                <Typography variant="body1" component="p" sx={{
+                  fontSize: "0.9rem",
+                }}>
+                  <b>{eventDetails.User.name}: </b>
+                  {eventDetails.detail}
+                </Typography>
+              </Box>
+            </Box>
+            <Divider />
+            {/* comments */}
+            <Box sx={{
+              display: "flex",
+              flex: 1,
+              flexDirection: "column",
+              gap: "5px",
+              padding: "10px",
+              overflowY: "auto",
+              backgroundColor: "rgba(0, 0, 0, 0.05)", //placeholder colour
+            }}>
+              {eventDetails.Comments.map((comment) => (
+                <Box key={comment.id} sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "5px",
+                }}>
+                  <Comment comment={comment} />
+                </Box>
+              ))}
+            </Box>
+            {/* create comment */}
+            <Box sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "5px",
+              padding: "10px",
+              alignItems: "center",
+            }}>
+              <UserAvatar userData={eventDetails.User} size={30} />
+              <TextField
+                id="new-comment"
+                type="text"
+                variant="outlined"
+                fullWidth
+                required
+                inputProps={{ style: { fontSize: 14 } }} // changes font size inside the input
+                InputLabelProps={{ style: { fontSize: 14 } }} // changes the label font size
+                InputProps={{
+                  style: {
+                    height: 40, // adjust the height as needed
+                    paddingTop: '5px', // Adjust padding to center vertically
+                    paddingBottom: '5px', // Adju
+                  },
+                }}
+              />
+              <Button variant="contained">Post</Button>
+            </Box>
           </Box>
         </Box>
       </Box>
