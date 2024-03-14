@@ -4,9 +4,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import UserAvatar from "../../components/UserAvatar";
 
-
-
-
 function Comment({comment}) {
     const { authState } = useAuth();
     const [user, setUser] = useState(null);
@@ -30,7 +27,7 @@ function Comment({comment}) {
                     console.log(user.errors[0].msg);
             }
         });
-    });
+    }, []);
 
     return (
         <>

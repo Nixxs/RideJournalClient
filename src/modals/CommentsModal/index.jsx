@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -12,11 +12,18 @@ import UserAvatar from "../../components/UserAvatar";
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Comment from './Comment';
+import { useAuth } from "../../features/AuthManager";
 
 
 const CommentsModal = ({ open, handleClose, eventDetails}) => {
+  const { authState } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [comments, setComments] = useState(eventDetails.Comments);
+
+  useEffect(() => {
+    setComments(eventDetails.Comments);
+  }, [eventDetails.Comments]);
 
   const handleNext = () => {
     setCurrentIndex(
@@ -30,6 +37,39 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
         (prevIndex - 1 + eventDetails.Images.length) % eventDetails.Images.length
     );
   };
+
+  const handlePostComment = () => {
+    const newComment = document.getElementById("new-comment").value;
+    console.log(newComment);
+    fetch(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/api/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `${authState.token}`
+      },
+      body: JSON.stringify({
+        content: newComment,
+        userId: authState.user.id,
+        eventId: eventDetails.id,
+      }),
+    })
+    .then((response) => response.json())
+    .then((comment) => {
+      switch (comment.result) {
+        case 200:
+          setComments([ ...comments, { 
+            content: comment.data.content, 
+            userId: comment.data.userId, 
+            eventId: comment.data.eventId,
+            id: comment.data.id
+          } ]);
+          break;
+        default:
+          // this should be used to display an error message
+          console.log(comment.errors[0].msg);
+      }
+    });
+  }
 
   return (
     <Modal
@@ -179,7 +219,7 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
               overflowY: "auto",
               backgroundColor: "rgba(0, 0, 0, 0.05)", //placeholder colour
             }}>
-              {eventDetails.Comments.map((comment) => (
+              {comments.map((comment) => (
                 <Box key={comment.id} sx={{
                   display: "flex",
                   flexDirection: "row",
@@ -215,7 +255,7 @@ const CommentsModal = ({ open, handleClose, eventDetails}) => {
                   },
                 }}
               />
-              <Button variant="contained">Post</Button>
+              <Button variant="contained" onClick={handlePostComment}>Post</Button>
             </Box>
           </Box>
         </Box>

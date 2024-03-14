@@ -290,6 +290,7 @@ function EventCard({ eventId }) {
             <Box sx={{ marginLeft: 1 }}>
               <Comments
                 eventDetails={state.eventDetails}
+                handleRefreshData={handleRefreshData}
                 sx={{ marginLeft: "30px" }}
               />
             </Box>

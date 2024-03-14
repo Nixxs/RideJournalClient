@@ -5,7 +5,7 @@ import { commentReducer, initialState } from "../../reducers/commentReducer";
 import CommentsModal from "../../modals/CommentsModal";
 import { useState } from "react";
 
-function Comments({ eventDetails }) {
+function Comments({ eventDetails, handleRefreshData }) {
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
 
   const handleClick = () => {
@@ -14,6 +14,7 @@ function Comments({ eventDetails }) {
 
   const handleCloseCommentsModal = () => {
     setCommentsModalOpen(false);
+    handleRefreshData();
   }
 
   return eventDetails.Comments ? (
